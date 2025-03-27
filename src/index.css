@@ -5,35 +5,49 @@
 
 @layer base {
   :root {
-    --background: 215 30% 10%;
-    --foreground: 210 40% 98%;
+    --background: 0 0% 9%;
+    --foreground: 0 0% 90%;
 
-    --card: 220 25% 15%;
-    --card-foreground: 210 40% 98%;
+    --muted: 0 0% 40%;
+    --muted-foreground: 0 0% 65%;
 
-    --popover: 222 25% 10%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 90%;
 
-    --primary: 210 100% 50%;
+    --card: 0 0% 9%;
+    --card-foreground: 0 0% 90%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+
+    --primary: 246 51% 53%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 214.38 15.15% 14.71%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 46 100% 61%;
+    --accent-foreground: 0 0% 9%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 50.6%;
+    --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    
+    --ring: 216 34% 17%;
+
     --radius: 0.5rem;
+
+    /* Custom colors */
+    --egypt-gold: 46 100% 61%;
+    --egypt-red: 0 73% 51%;
+    --egypt-blue: 225 73% 57%;
+    --radar-bg: 223 35% 14%;
+    --eeg-green: 142 71% 45%;
+    --eeg-yellow: 45 93% 56%;
+    --eeg-red: 0 91% 71%;
+    --eeg-blue: 214 100% 71%;
+    --ally: 142 71% 45%;
+    --enemy: 0 91% 71%;
+    --neutral: 214 15% 65%;
   }
 }
 
@@ -41,62 +55,267 @@
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23254B5B' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
   }
 }
 
 @layer components {
-  .glass-panel {
-    @apply bg-glass backdrop-blur-lg border border-glass-border rounded-lg shadow-lg;
-  }
-  
-  .glass-panel-header {
-    @apply border-b border-glass-border px-4 py-3 flex items-center bg-gradient-to-r from-egypt-nile/30 to-transparent;
-  }
-  
   .glassmorphism {
-    @apply bg-glass backdrop-blur-lg border border-glass-border rounded-lg overflow-hidden shadow-lg;
+    @apply rounded-lg border border-border/20 bg-card/70 backdrop-blur-md shadow-lg overflow-hidden;
   }
   
   .egypt-glassmorphism {
-    @apply bg-glass backdrop-blur-lg border border-egypt-gold/20 rounded-lg overflow-hidden shadow-lg;
+    @apply rounded-lg border border-egypt-gold/20 bg-card/70 backdrop-blur-md shadow-lg overflow-hidden;
   }
   
+  .glass-panel-header {
+    @apply flex items-center justify-between p-4 border-b border-border/20 bg-secondary/30;
+  }
+  
+  .egypt-header {
+    @apply text-lg font-medium text-egypt-gold;
+  }
+
   .dot-pattern {
     background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
     background-size: 20px 20px;
   }
   
+  .radar-sweep {
+    @apply absolute top-0 left-0 bottom-0 w-1/2 origin-right bg-eeg-green/10;
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+  
+  .animate-progress {
+    animation: progress 2s linear infinite;
+  }
+  
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s infinite;
+  }
+  
+  .animate-ping-slow {
+    animation: ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  
+  .animate-blink {
+    animation: blink 1s linear infinite;
+  }
+  
   .eeg-wave {
-    @apply h-10 flex items-center gap-0.5;
+    @apply flex items-end space-x-1 h-6;
   }
   
   .eeg-wave-bar {
-    @apply w-1 bg-primary h-full rounded-full animate-wave;
+    @apply w-1 bg-eeg-green rounded-t;
+    height: 80%;
+    animation: eeg-wave 0.5s infinite;
+    animation-delay: calc(var(--index) * 0.1s);
   }
   
-  .eeg-wave-bar:nth-child(1) { animation-delay: -0.45s; }
-  .eeg-wave-bar:nth-child(2) { animation-delay: -0.3s; }
-  .eeg-wave-bar:nth-child(3) { animation-delay: -0.15s; }
-  .eeg-wave-bar:nth-child(4) { animation-delay: 0s; }
-  .eeg-wave-bar:nth-child(5) { animation-delay: -0.15s; }
-  .eeg-wave-bar:nth-child(6) { animation-delay: -0.3s; }
-  .eeg-wave-bar:nth-child(7) { animation-delay: -0.45s; }
-  
-  .radar-sweep {
-    @apply absolute left-1/2 top-1/2 w-1/2 h-1 bg-gradient-to-r from-egypt-gold/20 to-egypt-gold/80 origin-left rounded-full;
-    transform-origin: left center;
+  .eeg-wave-bar:nth-child(1) {
+    --index: 0;
+    height: 40%;
   }
   
-  .egypt-header {
-    @apply text-lg font-semibold text-egypt-gold;
+  .eeg-wave-bar:nth-child(2) {
+    --index: 1;
+    height: 70%;
   }
   
-  .desert-gradient {
-    @apply bg-gradient-to-br from-egypt-sand/10 to-egypt-desert/10;
+  .eeg-wave-bar:nth-child(3) {
+    --index: 2;
+    height: 100%;
+  }
+  
+  .eeg-wave-bar:nth-child(4) {
+    --index: 3;
+    height: 60%;
+  }
+  
+  .eeg-wave-bar:nth-child(5) {
+    --index: 4;
+    height: 80%;
+  }
+  
+  .eeg-wave-bar:nth-child(6) {
+    --index: 5;
+    height: 40%;
+  }
+  
+  .eeg-wave-bar:nth-child(7) {
+    --index: 6;
+    height: 60%;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* GIS Map styles */
+  .tactical-map {
+    background-color: hsl(var(--radar-bg));
+    background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    min-height: 400px;
+  }
+  
+  .terrain-map {
+    background-color: #d2c6ad;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23bbaf97' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
+    min-height: 400px;
+  }
+  
+  .satellite-map {
+    background-color: #293746;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+                      url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+    background-size: 20px 20px, 20px 20px, 150px 150px;
+    min-height: 400px;
+  }
+  
+  .map-grid {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+  
+  /* North Africa and Middle East region overlays */
+  .region-egypt {
+    top: 25%;
+    left: 50%;
+    width: 10%;
+    height: 15%;
+    background-color: rgba(200, 180, 80, 0.2);
+    border: 1px solid rgba(200, 180, 80, 0.3);
+    transform: translate(-50%, -50%);
+  }
+  
+  .region-libya {
+    top: 30%;
+    left: 35%;
+    width: 15%;
+    height: 20%;
+    background-color: rgba(150, 150, 150, 0.2);
+    border: 1px solid rgba(150, 150, 150, 0.3);
+  }
+  
+  .region-sudan {
+    top: 50%;
+    left: 50%;
+    width: 15%;
+    height: 25%;
+    background-color: rgba(180, 120, 80, 0.2);
+    border: 1px solid rgba(180, 120, 80, 0.3);
+  }
+  
+  .region-saudi {
+    top: 35%;
+    left: 65%;
+    width: 15%;
+    height: 20%;
+    background-color: rgba(200, 160, 120, 0.2);
+    border: 1px solid rgba(200, 160, 120, 0.3);
+  }
+  
+  .mediterranean-sea {
+    top: 10%;
+    left: 50%;
+    width: 70%;
+    height: 15%;
+    background-color: rgba(100, 150, 200, 0.3);
+    border: 1px solid rgba(100, 150, 200, 0.4);
+  }
+  
+  .red-sea {
+    top: 40%;
+    left: 65%;
+    width: 10%;
+    height: 40%;
+    background-color: rgba(100, 150, 200, 0.3);
+    border: 1px solid rgba(100, 150, 200, 0.4);
+  }
+  
+  .nile-river {
+    top: 35%;
+    left: 52%;
+    width: 1%;
+    height: 30%;
+    background-color: rgba(100, 150, 200, 0.5);
+  }
+  
+  .sinai-mountains {
+    top: 30%;
+    left: 58%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .western-desert {
+    top: 35%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .eastern-desert {
+    top: 40%;
+    left: 55%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .sahara-desert {
+    top: 45%;
+    left: 30%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes progress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes eeg-wave {
+  0%, 100% {
+    height: var(--index-height, 50%);
+  }
+  50% {
+    height: calc(var(--index-height, 50%) * 1.5);
   }
 }

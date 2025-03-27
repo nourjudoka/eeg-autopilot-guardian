@@ -7,6 +7,8 @@ import MissileStatus from "@/components/MissileStatus";
 import GroundControl from "@/components/GroundControl";
 import SignalIntelligence from "@/components/SignalIntelligence";
 import GISTracking from "@/components/GISTracking";
+import WalkieTalkie from "@/components/WalkieTalkie";
+import { MapPin } from "lucide-react";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -51,7 +53,13 @@ const Index = () => {
                 <span className="text-sm text-primary mr-2">تكنولوجيا المصرية</span>
                 EEG Autopilot Guardian
               </h1>
-              <p className="text-sm text-muted-foreground">Egyptian Armed Forces - Tactical Command Dashboard</p>
+              <p className="text-sm text-muted-foreground">
+                Egyptian Armed Forces - North African Region Command
+                <span className="inline-flex items-center ml-2 text-egypt-gold text-xs">
+                  <MapPin className="h-3 w-3 mr-1" />
+                  North Africa & Middle East Operations
+                </span>
+              </p>
             </div>
             <div className="text-sm">
               <div className="bg-radar-bg px-3 py-1 rounded-md border border-egypt-gold/20">
@@ -61,33 +69,32 @@ const Index = () => {
           </header>
           
           <main className={`grid grid-cols-12 gap-6 transition-opacity duration-500 ${initialized ? 'opacity-100' : 'opacity-0'}`}>
-            {/* First row */}
+            {/* First row - EEG and Communication */}
             <div className="col-span-12 md:col-span-3">
-              <EEGMonitor className="h-full" />
+              <EEGMonitor className="h-[300px] mb-6" />
+              <WalkieTalkie className="h-[400px]" />
             </div>
+            
+            {/* Second row - Aircraft Status and Missile Status */}
             <div className="col-span-12 md:col-span-5">
-              <AircraftStatus className="h-full" />
+              <AircraftStatus className="h-[400px] mb-6" />
+              <MissileStatus className="h-[300px]" />
             </div>
+            
+            {/* Third row - Tactical Radar and Signal Intelligence */}
             <div className="col-span-12 md:col-span-4">
-              <MissileStatus className="h-full" />
+              <TacticalRadar className="h-[400px] mb-6" />
+              <SignalIntelligence className="h-[300px]" />
             </div>
             
-            {/* Second row */}
-            <div className="col-span-12 md:col-span-8">
-              <TacticalRadar className="h-full" />
-            </div>
-            <div className="col-span-12 md:col-span-4">
-              <SignalIntelligence className="h-full" />
-            </div>
-            
-            {/* Third row */}
+            {/* Fourth row - GIS Tracking (full width) */}
             <div className="col-span-12">
-              <GISTracking className="h-full" />
+              <GISTracking className="h-[500px]" />
             </div>
             
-            {/* Fourth row */}
+            {/* Fifth row - Ground Control (full width) */}
             <div className="col-span-12">
-              <GroundControl className="h-full" />
+              <GroundControl className="h-[300px]" />
             </div>
           </main>
           
