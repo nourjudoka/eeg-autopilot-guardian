@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { cn } from "@/lib/utils";
 import { Search, Plane, Shield, Flag, Radar, Radio, Cpu, AlertTriangle } from 'lucide-react';
@@ -275,7 +274,6 @@ const TacticalRadar: React.FC<TacticalRadarProps> = ({ className }) => {
     // Filter by view mode
     if (viewMode === 'air' && !['ally', 'enemy', 'neutral', 'awacs', 'e2c'].includes(target.type)) return false;
     if (viewMode === 'ground' && !['ground', 'air-defense'].includes(target.type)) return false;
-    if (viewMode === 'naval' && target.type !== 'naval') return false;
     if (viewMode === 'cyber' && target.type !== 'cyber') return false;
     
     return true;
