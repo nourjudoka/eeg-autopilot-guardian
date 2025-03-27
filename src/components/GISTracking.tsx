@@ -1,7 +1,8 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import { cn } from "@/lib/utils";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { MapPin, Mountain, Plane, Shield, Radio, Ship, Eye, Target, AlertTriangle } from 'lucide-react';
+import { MapPin, Mountain, Plane, Shield, Radio, Ship, Eye, Target, AlertTriangle, Globe, Layers } from 'lucide-react';
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 
 interface GISTrackingProps {
@@ -31,19 +32,22 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
   const [selectedLocation, setSelectedLocation] = useState<MapLocation | null>(null);
   const [zoom, setZoom] = useState(1);
   const [center, setCenter] = useState({ lat: 26, lng: 30 }); // Egypt center
-  const [viewMode, setViewMode] = useState<'satellite' | 'terrain' | 'tactical'>('terrain');
+  const [viewMode, setViewMode] = useState<'satellite' | 'terrain' | 'tactical' | '3d'>('satellite');
   const [showBases, setShowBases] = useState(true);
   const [showAircraft, setShowAircraft] = useState(true);
   const [showVessels, setShowVessels] = useState(true);
   const [showUnits, setShowUnits] = useState(true);
   const [showRadars, setShowRadars] = useState(true);
   const [showThreats, setShowThreats] = useState(true);
+  const [showLabels, setShowLabels] = useState(true);
+  const [showTerrain, setShowTerrain] = useState(true);
   
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapDimensions, setMapDimensions] = useState({ width: 0, height: 0 });
   const [isMoving, setIsMoving] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [localSensorData, setLocalSensorData] = useState<{ time: string; value: number }[]>([]);
+  const [tilt, setTilt] = useState(30); // 3D tilt effect (0-60 degrees)
   
   // Initialize map dimensions
   useEffect(() => {
@@ -243,8 +247,24 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
     const adjustedLat = lat - centerOffsetLat;
     const adjustedLng = lng - centerOffsetLng;
     
-    const y = ((regionBounds.north - adjustedLat) / latRange) * mapDimensions.height / zoom;
+    // Apply 3D perspective tilt if in 3D mode
+    let y = ((regionBounds.north - adjustedLat) / latRange) * mapDimensions.height / zoom;
     const x = ((adjustedLng - regionBounds.west) / lngRange) * mapDimensions.width / zoom;
+    
+    // Apply 3D effect when in 3D mode
+    if (viewMode === '3d') {
+      // Apply perspective distortion based on tilt
+      const perspective = 800; // Perspective distance
+      const verticalCenter = mapDimensions.height / 2;
+      const distanceFromCenter = y - verticalCenter;
+      
+      // Calculate 3D effect
+      const tiltFactor = tilt / 100;
+      const perspectiveScale = perspective / (perspective + distanceFromCenter * tiltFactor);
+      
+      // Apply to y coordinate
+      y = verticalCenter + distanceFromCenter * perspectiveScale;
+    }
     
     return { x, y };
   };
@@ -318,6 +338,15 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
   const handleResetView = () => {
     setZoom(1);
     setCenter({ lat: 26, lng: 30 }); // Reset to Egypt
+    setTilt(30); // Reset tilt
+  };
+  
+  const increaseTilt = () => {
+    setTilt(prev => Math.min(prev + 10, 60));
+  };
+  
+  const decreaseTilt = () => {
+    setTilt(prev => Math.max(prev - 10, 0));
   };
   
   const filterLocations = (locations: MapLocation[]) => {
@@ -335,7 +364,10 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
   return (
     <div className={cn("egypt-glassmorphism", className)}>
       <div className="glass-panel-header">
-        <h3 className="egypt-header">GIS Tracking System</h3>
+        <h3 className="egypt-header flex items-center">
+          <Globe className="mr-2 h-5 w-5" />
+          GIS Tracking System
+        </h3>
         <div className="text-sm text-muted-foreground ml-auto">
           <span className="text-egypt-gold">North Africa & Middle East Region</span>
         </div>
@@ -346,22 +378,36 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
           <div className="flex justify-between mb-3">
             <div className="flex space-x-1">
               <button 
-                className={cn("px-2 py-1 text-xs rounded", viewMode === 'satellite' ? "bg-egypt-gold/70" : "bg-radar-bg")}
+                className={cn("px-2 py-1 text-xs rounded flex items-center", 
+                  viewMode === 'satellite' ? "bg-egypt-gold/70" : "bg-radar-bg"
+                )}
                 onClick={() => setViewMode('satellite')}
               >
                 Satellite
               </button>
               <button 
-                className={cn("px-2 py-1 text-xs rounded", viewMode === 'terrain' ? "bg-egypt-gold/70" : "bg-radar-bg")}
+                className={cn("px-2 py-1 text-xs rounded flex items-center", 
+                  viewMode === 'terrain' ? "bg-egypt-gold/70" : "bg-radar-bg"
+                )}
                 onClick={() => setViewMode('terrain')}
               >
                 Terrain
               </button>
               <button 
-                className={cn("px-2 py-1 text-xs rounded", viewMode === 'tactical' ? "bg-egypt-gold/70" : "bg-radar-bg")}
+                className={cn("px-2 py-1 text-xs rounded flex items-center", 
+                  viewMode === 'tactical' ? "bg-egypt-gold/70" : "bg-radar-bg"
+                )}
                 onClick={() => setViewMode('tactical')}
               >
                 Tactical
+              </button>
+              <button 
+                className={cn("px-2 py-1 text-xs rounded flex items-center", 
+                  viewMode === '3d' ? "bg-egypt-gold/70" : "bg-radar-bg"
+                )}
+                onClick={() => setViewMode('3d')}
+              >
+                3D View
               </button>
             </div>
             <div className="flex space-x-1">
@@ -371,58 +417,171 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
               <button className="px-2 py-1 text-xs rounded bg-radar-bg" onClick={handleZoomOut}>
                 -
               </button>
+              {viewMode === '3d' && (
+                <>
+                  <button className="px-2 py-1 text-xs rounded bg-radar-bg" onClick={increaseTilt}>
+                    ↑
+                  </button>
+                  <button className="px-2 py-1 text-xs rounded bg-radar-bg" onClick={decreaseTilt}>
+                    ↓
+                  </button>
+                </>
+              )}
               <button className="px-2 py-1 text-xs rounded bg-radar-bg" onClick={handleResetView}>
                 Reset
               </button>
             </div>
           </div>
           
+          <div className="flex flex-wrap gap-1 mb-3">
+            <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+              <span>Layers:</span>
+            </div>
+            <button 
+              className={cn("px-2 py-1 text-xs rounded flex items-center", 
+                showLabels ? "bg-egypt-gold/20 text-egypt-gold" : "bg-muted/20 text-muted-foreground"
+              )}
+              onClick={() => setShowLabels(!showLabels)}
+            >
+              <Layers className="h-3 w-3 mr-1" />
+              Labels
+            </button>
+            <button 
+              className={cn("px-2 py-1 text-xs rounded flex items-center", 
+                showTerrain ? "bg-egypt-gold/20 text-egypt-gold" : "bg-muted/20 text-muted-foreground"
+              )}
+              onClick={() => setShowTerrain(!showTerrain)}
+            >
+              <Mountain className="h-3 w-3 mr-1" />
+              Terrain
+            </button>
+          </div>
+          
           <div 
             ref={mapRef}
             className={cn("relative w-full rounded-md overflow-hidden border border-border/50", 
-              viewMode === 'satellite' ? "satellite-map" : 
-              viewMode === 'terrain' ? "terrain-map" : "tactical-map"
+              viewMode === 'satellite' ? "google-earth-satellite" : 
+              viewMode === 'terrain' ? "google-earth-terrain" : 
+              viewMode === '3d' ? "google-earth-3d" : "tactical-map"
             )}
-            style={{ height: 'calc(100% - 60px)' }}
+            style={{ height: 'calc(100% - 80px)' }}
             onClick={handleMapClick}
             onMouseDown={handleMapMouseDown}
             onMouseMove={handleMapMouseMove}
             onMouseUp={handleMapMouseUp}
             onMouseLeave={handleMapMouseLeave}
           >
+            {/* 3D perspective effect */}
+            {viewMode === '3d' && (
+              <div 
+                className="absolute inset-0 bg-gradient-to-b from-blue-900/30 to-transparent pointer-events-none"
+                style={{ opacity: tilt / 100 }}
+              ></div>
+            )}
+            
             {/* Map grid lines */}
-            <div className="absolute inset-0 map-grid opacity-30"></div>
+            <div className={cn("absolute inset-0 map-grid", viewMode === 'tactical' ? "opacity-30" : "opacity-10")}></div>
+            
+            {/* Google Earth-like atmosphere glow */}
+            {(viewMode === 'satellite' || viewMode === '3d') && (
+              <div className="absolute top-0 left-0 right-0 h-10 bg-gradient-to-b from-blue-500/30 to-transparent"></div>
+            )}
             
             {/* Region overlays */}
-            <div className={cn("absolute region-egypt", viewMode === 'tactical' ? "opacity-40" : "opacity-20")}></div>
-            <div className={cn("absolute region-libya", viewMode === 'tactical' ? "opacity-40" : "opacity-20")}></div>
-            <div className={cn("absolute region-sudan", viewMode === 'tactical' ? "opacity-40" : "opacity-20")}></div>
-            <div className={cn("absolute region-saudi", viewMode === 'tactical' ? "opacity-40" : "opacity-20")}></div>
-            
-            {/* Mediterranean Sea */}
-            <div className={cn("absolute mediterranean-sea", viewMode === 'tactical' ? "opacity-30" : "opacity-10")}></div>
-            
-            {/* Red Sea */}
-            <div className={cn("absolute red-sea", viewMode === 'tactical' ? "opacity-30" : "opacity-10")}></div>
-            
-            {/* Nile River */}
-            <div className={cn("absolute nile-river", viewMode === 'tactical' ? "opacity-50" : "opacity-20")}></div>
-            
-            {/* Terrain features */}
-            {viewMode === 'terrain' && (
+            {showTerrain && (
               <>
-                <div className="absolute sinai-mountains opacity-30">
-                  <Mountain className="h-6 w-6 text-stone-600" />
-                </div>
-                <div className="absolute western-desert opacity-30">
-                  <div className="text-sm text-stone-600">Western Desert</div>
-                </div>
-                <div className="absolute eastern-desert opacity-30">
-                  <div className="text-sm text-stone-600">Eastern Desert</div>
-                </div>
-                <div className="absolute sahara-desert opacity-30">
-                  <div className="text-sm text-stone-600">Sahara</div>
-                </div>
+                <div className={cn("absolute region-egypt", 
+                  viewMode === 'tactical' ? "opacity-40" : 
+                  viewMode === '3d' ? "opacity-30 earth-region-elevation" : "opacity-20"
+                )}></div>
+                <div className={cn("absolute region-libya", 
+                  viewMode === 'tactical' ? "opacity-40" : 
+                  viewMode === '3d' ? "opacity-30 earth-region-elevation" : "opacity-20"
+                )}></div>
+                <div className={cn("absolute region-sudan", 
+                  viewMode === 'tactical' ? "opacity-40" : 
+                  viewMode === '3d' ? "opacity-30 earth-region-elevation" : "opacity-20"
+                )}></div>
+                <div className={cn("absolute region-saudi", 
+                  viewMode === 'tactical' ? "opacity-40" : 
+                  viewMode === '3d' ? "opacity-30 earth-region-elevation" : "opacity-20"
+                )}></div>
+                
+                {/* Mediterranean Sea */}
+                <div className={cn("absolute mediterranean-sea", 
+                  viewMode === 'tactical' ? "opacity-30" : 
+                  viewMode === 'satellite' || viewMode === '3d' ? "opacity-40 google-earth-water" : "opacity-10"
+                )}></div>
+                
+                {/* Red Sea */}
+                <div className={cn("absolute red-sea", 
+                  viewMode === 'tactical' ? "opacity-30" : 
+                  viewMode === 'satellite' || viewMode === '3d' ? "opacity-40 google-earth-water" : "opacity-10"
+                )}></div>
+                
+                {/* Nile River */}
+                <div className={cn("absolute nile-river", 
+                  viewMode === 'tactical' ? "opacity-50" : 
+                  viewMode === 'satellite' || viewMode === '3d' ? "opacity-60 google-earth-water" : "opacity-20"
+                )}></div>
+                
+                {/* Terrain features */}
+                {(viewMode === 'terrain' || viewMode === 'satellite' || viewMode === '3d') && (
+                  <>
+                    <div className={cn("absolute sinai-mountains", 
+                      viewMode === '3d' ? "earth-elevation" : "opacity-30"
+                    )}>
+                      <Mountain className="h-6 w-6 text-stone-600" />
+                    </div>
+                    {showLabels && (
+                      <>
+                        <div className="absolute western-desert opacity-30">
+                          <div className="text-sm text-stone-600">Western Desert</div>
+                        </div>
+                        <div className="absolute eastern-desert opacity-30">
+                          <div className="text-sm text-stone-600">Eastern Desert</div>
+                        </div>
+                        <div className="absolute sahara-desert opacity-30">
+                          <div className="text-sm text-stone-600">Sahara</div>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
+                
+                {/* Cities and places (Google Earth style) */}
+                {showLabels && (viewMode === 'satellite' || viewMode === 'terrain' || viewMode === '3d') && (
+                  <>
+                    <div className="absolute city-cairo">
+                      <div className="earth-city-marker"></div>
+                      <div className="earth-city-label">Cairo</div>
+                    </div>
+                    <div className="absolute city-alexandria">
+                      <div className="earth-city-marker"></div>
+                      <div className="earth-city-label">Alexandria</div>
+                    </div>
+                    <div className="absolute city-tripoli">
+                      <div className="earth-city-marker"></div>
+                      <div className="earth-city-label">Tripoli</div>
+                    </div>
+                    <div className="absolute city-khartoum">
+                      <div className="earth-city-marker"></div>
+                      <div className="earth-city-label">Khartoum</div>
+                    </div>
+                    <div className="absolute city-riyadh">
+                      <div className="earth-city-marker"></div>
+                      <div className="earth-city-label">Riyadh</div>
+                    </div>
+                    <div className="absolute city-tehran">
+                      <div className="earth-city-marker"></div>
+                      <div className="earth-city-label">Tehran</div>
+                    </div>
+                    <div className="absolute city-istanbul">
+                      <div className="earth-city-marker"></div>
+                      <div className="earth-city-label">Istanbul</div>
+                    </div>
+                  </>
+                )}
               </>
             )}
             
@@ -452,8 +611,13 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
                     </div>
                   )}
                   
-                  {isSelected && (
-                    <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-background/80 px-2 py-1 rounded text-xs whitespace-nowrap border border-border/50">
+                  {/* Location name label - only show if selected or if labels are enabled */}
+                  {(isSelected || (showLabels && viewMode !== 'tactical')) && (
+                    <div className={cn(
+                      "absolute -bottom-8 left-1/2 transform -translate-x-1/2",
+                      "bg-background/80 px-2 py-0.5 rounded text-xs whitespace-nowrap border border-border/50",
+                      { "bg-egypt-gold/30 border-egypt-gold": isSelected }
+                    )}>
                       {location.name}
                     </div>
                   )}
@@ -465,6 +629,18 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
             <div className="absolute bottom-2 right-2 text-[10px] text-muted-foreground bg-background/50 px-1 rounded">
               Egyptian Armed Forces GIS System
             </div>
+            
+            {/* Google Earth-like compass */}
+            {(viewMode === 'satellite' || viewMode === 'terrain' || viewMode === '3d') && (
+              <div className="absolute bottom-8 right-2 w-10 h-10 bg-background/50 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 earth-compass">
+                  <div className="earth-compass-n">N</div>
+                  <div className="earth-compass-e">E</div>
+                  <div className="earth-compass-s">S</div>
+                  <div className="earth-compass-w">W</div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         
