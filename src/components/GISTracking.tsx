@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { cn } from "@/lib/utils";
-import { Map, Radar, Flag, Plane, Shield, Mountain, Radio, Volume2, VolumeX, Mic, MicOff } from 'lucide-react';
+import { Map, Radar, Flag, Plane, Shield, Mountain, Radio, Volume2, VolumeX, Mic, MicOff, Compass, Navigation } from 'lucide-react';
 
 interface Coordinate {
   lat: number;
@@ -38,7 +38,7 @@ interface GISTrackingProps {
 const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
   const [units, setUnits] = useState<Unit[]>([]);
   const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
-  const [mapCenter, setMapCenter] = useState<Coordinate>({ lat: 29.9773, lng: 31.1325 }); // Cairo coordinates
+  const [mapCenter, setMapCenter] = useState<Coordinate>({ lat: 29.9773, lng: 31.1325 });
   const [mapZoom, setMapZoom] = useState(6);
   const [filterType, setFilterType] = useState<string>('all');
   const [filterAlliance, setFilterAlliance] = useState<string>('all');
@@ -107,6 +107,39 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
             { lat: 28.5, lng: 34.5, elevation: 0 },
             { lat: 25.0, lng: 35.0, elevation: 0 },
             { lat: 24.0, lng: 34.0, elevation: 0 },
+          ]
+        },
+        {
+          id: 'forest-1',
+          name: 'Nile Valley',
+          type: 'forest',
+          coordinates: [
+            { lat: 30.0, lng: 31.1, elevation: 10 },
+            { lat: 29.0, lng: 31.2, elevation: 12 },
+            { lat: 27.0, lng: 31.0, elevation: 15 },
+            { lat: 28.0, lng: 30.8, elevation: 14 },
+          ]
+        },
+        {
+          id: 'urban-2',
+          name: 'Alexandria',
+          type: 'urban',
+          coordinates: [
+            { lat: 31.2, lng: 29.8, elevation: 5 },
+            { lat: 31.3, lng: 30.0, elevation: 4 },
+            { lat: 31.1, lng: 30.1, elevation: 3 },
+            { lat: 31.0, lng: 29.9, elevation: 4 },
+          ]
+        },
+        {
+          id: 'urban-3',
+          name: 'Cairo',
+          type: 'urban',
+          coordinates: [
+            { lat: 30.0, lng: 31.2, elevation: 23 },
+            { lat: 30.1, lng: 31.3, elevation: 21 },
+            { lat: 29.9, lng: 31.4, elevation: 22 },
+            { lat: 29.8, lng: 31.3, elevation: 20 },
           ]
         },
       ];
@@ -297,12 +330,23 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
 
   const getTerrainColor = (type: string) => {
     switch(type) {
-      case 'mountain': return 'rgba(120, 120, 120, 0.3)';
-      case 'desert': return 'rgba(230, 210, 150, 0.3)';
-      case 'urban': return 'rgba(150, 150, 150, 0.3)';
-      case 'water': return 'rgba(100, 150, 220, 0.3)';
-      case 'forest': return 'rgba(80, 160, 80, 0.3)';
-      default: return 'rgba(200, 200, 200, 0.2)';
+      case 'mountain': return 'rgba(120, 120, 120, 0.6)';
+      case 'desert': return 'rgba(230, 210, 150, 0.5)';
+      case 'urban': return 'rgba(150, 150, 150, 0.5)';
+      case 'water': return 'rgba(100, 150, 220, 0.5)';
+      case 'forest': return 'rgba(80, 160, 80, 0.5)';
+      default: return 'rgba(200, 200, 200, 0.3)';
+    }
+  };
+
+  const getTerrainPattern = (type: string) => {
+    switch(type) {
+      case 'mountain': return "url('#mountain-pattern')";
+      case 'desert': return "url('#desert-pattern')";
+      case 'urban': return "url('#urban-pattern')";
+      case 'water': return "url('#water-pattern')";
+      case 'forest': return "url('#forest-pattern')";
+      default: return 'none';
     }
   };
 
@@ -375,6 +419,22 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
       const { x, y } = getMapPosition(coord);
       return `${x}%,${y}%`;
     }).join(' ');
+  };
+
+  const getElevationOpacity = (elevation: number = 0) => {
+    const maxElevation = 2500;
+    return Math.min(0.9, Math.max(0.2, elevation / maxElevation + 0.2));
+  };
+
+  const getUnitTrailPath = (unit: Unit) => {
+    const { x, y } = getMapPosition(unit.position);
+    const headingRad = (unit.heading * Math.PI) / 180;
+    const length = unit.speed ? Math.min(10, unit.speed / (unit.type === 'aircraft' ? 80 : 8)) : 2;
+    
+    const x2 = x - Math.cos(headingRad) * length;
+    const y2 = y - Math.sin(headingRad) * length;
+    
+    return `M ${x}% ${y}% L ${x2}% ${y2}%`;
   };
 
   return (
@@ -456,15 +516,60 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
       </div>
       
       <div className="p-4 grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div className="md:col-span-3 rounded-lg overflow-hidden border border-egypt-gold/20 relative aspect-[4/3] desert-gradient">
+        <div className="md:col-span-3 rounded-lg overflow-hidden border border-egypt-gold/20 relative aspect-[4/3] bg-[#0a192f]">
           <div className="absolute inset-0">
-            <div className="absolute inset-0 grid grid-cols-6 grid-rows-6">
-              {Array.from({length: 6}).map((_, i) => (
+            <svg width="0" height="0">
+              <defs>
+                <pattern id="mountain-pattern" width="10" height="10" patternUnits="userSpaceOnUse">
+                  <path d="M0,10 L5,0 L10,10 Z" fill="#555" fillOpacity="0.4" />
+                </pattern>
+                <pattern id="desert-pattern" width="10" height="10" patternUnits="userSpaceOnUse">
+                  <rect width="10" height="10" fill="#e6d296" fillOpacity="0.2" />
+                  <circle cx="5" cy="5" r="1" fill="#d4c283" fillOpacity="0.4" />
+                </pattern>
+                <pattern id="urban-pattern" width="8" height="8" patternUnits="userSpaceOnUse">
+                  <rect width="4" height="4" fill="#999" fillOpacity="0.3" />
+                  <rect x="4" y="4" width="4" height="4" fill="#999" fillOpacity="0.3" />
+                </pattern>
+                <pattern id="water-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M0,10 Q5,5 10,10 T20,10" stroke="#64a8dc" strokeWidth="1" fill="none" strokeOpacity="0.4" />
+                  <path d="M0,15 Q5,10 10,15 T20,15" stroke="#64a8dc" strokeWidth="1" fill="none" strokeOpacity="0.3" />
+                </pattern>
+                <pattern id="forest-pattern" width="10" height="10" patternUnits="userSpaceOnUse">
+                  <circle cx="5" cy="5" r="3" fill="#2d8644" fillOpacity="0.4" />
+                </pattern>
+              </defs>
+            </svg>
+
+            <div className="absolute inset-0 grid grid-cols-12 grid-rows-12">
+              {Array.from({length: 12}).map((_, i) => (
                 <div key={`col-${i}`} className="border-r border-egypt-gold/10 h-full"></div>
               ))}
-              {Array.from({length: 6}).map((_, i) => (
+              {Array.from({length: 12}).map((_, i) => (
                 <div key={`row-${i}`} className="border-b border-egypt-gold/10 w-full"></div>
               ))}
+            </div>
+            
+            <div className="absolute top-2 left-0 w-full flex justify-between px-4 text-[10px] text-egypt-gold/60">
+              {Array.from({length: 5}).map((_, i) => {
+                const lng = mapCenter.lng - (30 / mapZoom / 2) + (30 / mapZoom / 4) * i;
+                return (
+                  <div key={`lng-${i}`} className="text-center">
+                    {lng.toFixed(1)}°E
+                  </div>
+                );
+              })}
+            </div>
+            
+            <div className="absolute top-0 left-2 h-full flex flex-col justify-between py-4 text-[10px] text-egypt-gold/60">
+              {Array.from({length: 5}).map((_, i) => {
+                const lat = mapCenter.lat + (20 / mapZoom / 2) - (20 / mapZoom / 4) * i;
+                return (
+                  <div key={`lat-${i}`} className="text-right">
+                    {lat.toFixed(1)}°N
+                  </div>
+                );
+              })}
             </div>
             
             <div className="absolute inset-0 p-4">
@@ -473,16 +578,43 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
                   <polygon 
                     points={coordsToPolygon(feature.coordinates)} 
                     fill={getTerrainColor(feature.type)}
-                    stroke="rgba(255,255,255,0.2)"
+                    stroke="rgba(255,255,255,0.3)"
                     strokeWidth="0.5"
+                    style={{
+                      fillOpacity: feature.type === 'mountain' ? 
+                        getElevationOpacity(Math.max(...feature.coordinates.map(c => c.elevation || 0))) : 
+                        undefined
+                    }}
                   />
+                  {feature.type === 'mountain' && (
+                    <polygon 
+                      points={coordsToPolygon(feature.coordinates)} 
+                      fill={getTerrainPattern(feature.type)}
+                      style={{ mixBlendMode: 'overlay' }}
+                    />
+                  )}
+                  {feature.type === 'water' && (
+                    <polygon 
+                      points={coordsToPolygon(feature.coordinates)} 
+                      fill={getTerrainPattern(feature.type)}
+                      style={{ mixBlendMode: 'overlay' }}
+                    >
+                      <animate 
+                        attributeName="opacity" 
+                        values="0.3;0.6;0.3" 
+                        dur="5s" 
+                        repeatCount="indefinite" 
+                      />
+                    </polygon>
+                  )}
                   {feature.type !== 'water' && (
                     <text
                       x={getMapPosition(feature.coordinates[0]).x + "%"}
                       y={getMapPosition(feature.coordinates[0]).y + "%"}
-                      fontSize="2"
-                      fill="rgba(255,255,255,0.6)"
+                      fontSize="1.8"
+                      fill="rgba(255,255,255,0.7)"
                       className="pointer-events-none"
+                      textAnchor="start"
                     >
                       {feature.name}
                     </text>
@@ -490,15 +622,39 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
                 </svg>
               ))}
               
-              <div className="absolute w-1/3 h-1/2 border border-egypt-nile/30 rounded-lg" 
-                style={{top: '20%', left: '40%'}}></div>
+              <svg className="absolute inset-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                <path 
+                  d="M 55,20 Q 54,40 55,55 Q 56,65 55,80"
+                  stroke="rgba(100, 170, 230, 0.6)"
+                  strokeWidth="1"
+                  fill="none"
+                  strokeLinecap="round"
+                  className="animate-pulse-slow"
+                />
+                <path 
+                  d="M 55,20 Q 54,40 55,55 Q 56,65 55,80"
+                  stroke="rgba(100, 170, 230, 0.3)"
+                  strokeWidth="2"
+                  fill="none"
+                  strokeLinecap="round"
+                />
+              </svg>
               
-              <div className="absolute w-1 h-1/2 bg-egypt-nile/30"
-                style={{top: '25%', left: '55%'}}></div>
-                
-              <div className="absolute top-0 left-0 right-0 h-1/6 bg-egypt-nile/20 rounded-b-lg"></div>
-              
-              <div className="absolute top-1/4 right-0 w-1/6 bottom-0 bg-egypt-nile/20 rounded-l-lg"></div>
+              <svg className="absolute inset-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                {filteredUnits.map(unit => (
+                  <path
+                    key={`trail-${unit.id}`}
+                    d={getUnitTrailPath(unit)}
+                    stroke={unit.alliance === 'ally' ? 'rgba(100, 200, 100, 0.6)' : 
+                            unit.alliance === 'enemy' ? 'rgba(200, 100, 100, 0.6)' : 
+                            'rgba(200, 200, 200, 0.6)'}
+                    strokeWidth="0.5"
+                    strokeDasharray={unit.type === 'aircraft' ? "1,1" : ""}
+                    strokeLinecap="round"
+                    fill="none"
+                  />
+                ))}
+              </svg>
             </div>
             
             {filteredUnits.map(unit => {
@@ -509,36 +665,70 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
                 <div 
                   key={unit.id}
                   className={cn(
-                    "absolute w-3 h-3 transform -translate-x-1/2 -translate-y-1/2 rounded-full cursor-pointer transition-all",
-                    getAllianceColor(unit.alliance),
-                    isSelected ? "ring-2 ring-egypt-gold animate-ping-slow" : "",
-                    unit.type === 'aircraft' ? "bg-opacity-70" : "bg-opacity-90"
+                    "absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all",
+                    isSelected ? "z-20" : "z-10"
                   )}
                   style={{
                     left: `${x}%`,
                     top: `${y}%`,
-                    transform: `translate(-50%, -50%) rotate(${unit.heading}deg)`
                   }}
                   onClick={() => handleSelectUnit(unit)}
                 >
                   <div 
                     className={cn(
-                      "absolute h-4 w-0.5 top-0 left-1/2 -translate-x-1/2 -translate-y-full",
-                      unit.alliance === 'ally' ? "bg-ally" : 
-                      unit.alliance === 'enemy' ? "bg-enemy" : "bg-neutral"
+                      "flex items-center justify-center w-5 h-5 rounded-full",
+                      getAllianceColor(unit.alliance),
+                      isSelected ? "ring-2 ring-egypt-gold" : "",
+                      unit.type === 'aircraft' ? "bg-opacity-90" : "bg-opacity-90"
                     )}
-                  ></div>
+                    style={{
+                      transform: `rotate(${unit.heading}deg)`,
+                      boxShadow: isSelected ? '0 0 5px rgba(255, 215, 0, 0.7)' : 'none'
+                    }}
+                  >
+                    {unit.type === 'aircraft' && <Plane className="h-3 w-3" />}
+                    {unit.type === 'ground' && <Flag className="h-3 w-3" />}
+                    {unit.type === 'defense' && <Shield className="h-3 w-3" />}
+                    {unit.type === 'naval' && <Navigation className="h-3 w-3" />}
+                  </div>
+                  
+                  {unit.type === 'aircraft' && (
+                    <div 
+                      className={cn(
+                        "absolute h-4 w-0.5 -top-2 left-1/2 -translate-x-1/2 transform-gpu",
+                        unit.alliance === 'ally' ? "bg-ally" : 
+                        unit.alliance === 'enemy' ? "bg-enemy" : "bg-neutral"
+                      )}
+                      style={{
+                        transform: `translateY(-50%) rotate(${unit.heading}deg)`,
+                        transformOrigin: 'bottom center'
+                      }}
+                    ></div>
+                  )}
                   
                   <div 
                     className={cn(
-                      "absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full",
+                      "absolute -top-1 -right-1 w-2 h-2 rounded-full border border-white/30",
                       getStatusColor(unit.status)
                     )}
-                  ></div>
+                  >
+                    {unit.status === 'engaging' && (
+                      <div className="absolute inset-0 rounded-full animate-ping-slow bg-enemy opacity-70"></div>
+                    )}
+                  </div>
                   
                   {isSelected && (
-                    <div className="absolute top-4 left-0 text-xs whitespace-nowrap bg-background/80 px-1 rounded z-10">
+                    <div className="absolute top-4 left-0 text-xs whitespace-nowrap bg-background/80 px-1 rounded z-30 border border-egypt-gold/30">
                       {unit.callsign}
+                      {unit.type === 'aircraft' && unit.altitude && (
+                        <span className="ml-1 text-[9px]">{Math.round(unit.altitude/1000)}K'</span>
+                      )}
+                    </div>
+                  )}
+                  
+                  {(unit.altitude || unit.position.elevation) && !isSelected && (
+                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 text-[8px] text-egypt-gold/70">
+                      {unit.altitude ? `${Math.round(unit.altitude/1000)}K'` : `${unit.position.elevation}m`}
                     </div>
                   )}
                 </div>
@@ -546,32 +736,55 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
             })}
           </div>
           
+          <div className="absolute top-2 right-2 w-10 h-10 bg-background/50 rounded-full flex items-center justify-center border border-egypt-gold/30">
+            <Compass className="h-6 w-6 text-egypt-gold/80" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-bold">N</div>
+            <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 text-xs font-bold">E</div>
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-xs font-bold">S</div>
+            <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-bold">W</div>
+          </div>
+          
           <div className="absolute bottom-2 right-2 flex flex-col space-y-1">
             <button 
-              className="w-6 h-6 bg-background/80 rounded flex items-center justify-center text-lg"
+              className="w-6 h-6 bg-background/80 rounded flex items-center justify-center text-lg border border-egypt-gold/30"
               onClick={() => setMapZoom(prev => Math.min(prev + 1, 12))}
             >
               +
             </button>
             <button 
-              className="w-6 h-6 bg-background/80 rounded flex items-center justify-center text-lg"
+              className="w-6 h-6 bg-background/80 rounded flex items-center justify-center text-lg border border-egypt-gold/30"
               onClick={() => setMapZoom(prev => Math.max(prev - 1, 3))}
             >
               -
             </button>
             <button 
-              className="w-6 h-6 bg-background/80 rounded flex items-center justify-center text-xs"
+              className="w-6 h-6 bg-background/80 rounded flex items-center justify-center text-xs border border-egypt-gold/30"
               onClick={() => {
                 setMapCenter({ lat: 29.9773, lng: 31.1325 });
                 setMapZoom(6);
               }}
+              title="Reset View"
             >
               R
             </button>
           </div>
           
-          <div className="absolute bottom-2 left-2 text-xs bg-background/80 px-2 py-1 rounded">
-            LAT: {mapCenter.lat.toFixed(4)} | LNG: {mapCenter.lng.toFixed(4)} | ZOOM: {mapZoom}
+          <div className="absolute bottom-2 left-2 text-xs bg-background/80 px-2 py-1 rounded border border-egypt-gold/30">
+            <div className="flex items-center space-x-2">
+              <span>LAT: {mapCenter.lat.toFixed(4)}</span>
+              <span>LNG: {mapCenter.lng.toFixed(4)}</span>
+              <span>ZOOM: {mapZoom}x</span>
+            </div>
+            <div className="text-[10px] text-egypt-gold/70">
+              {selectedUnit ? `TRACKING: ${selectedUnit.callsign}` : 'NO UNIT SELECTED'}
+            </div>
+          </div>
+          
+          <div className="absolute bottom-12 left-2 bg-background/60 px-1 rounded text-[9px]">
+            <div className="flex items-center">
+              <div className="w-16 h-0.5 bg-egypt-gold/70"></div>
+              <span className="ml-1">{Math.round(50 / mapZoom)} km</span>
+            </div>
           </div>
         </div>
         
@@ -669,7 +882,7 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
                 className="flex-1 bg-background/20 text-xs rounded-md py-1 px-2 focus:outline-none focus:ring-1 focus:ring-egypt-gold"
               />
               <button
-                className="ml-2 px-2 py-1 bg-egypt-gold/20 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                className="ml-2 px-2 py-1 bg-egypt-gold/20 rounded disabled:opacity-50 disabled:cursor-not-allowed border border-egypt-gold/30"
                 disabled={!selectedUnit || !communicationActive || !currentMessage.trim()}
                 onClick={handleSendMessage}
               >
@@ -684,84 +897,99 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
         <div className="p-4 pt-0">
           <div className="bg-radar-bg rounded-lg p-3">
             <h4 className="text-egypt-gold border-b border-egypt-gold/20 pb-1 mb-2 flex justify-between items-center">
-              <span>Unit Details</span>
+              <span className="flex items-center">
+                {getUnitIcon(selectedUnit.type)}
+                <span className="ml-2">{selectedUnit.callsign} Details</span>
+              </span>
               <div className="flex items-center text-xs">
                 <span className={cn(
-                  "px-1.5 py-0.5 rounded mr-2",
-                  getStatusColor(selectedUnit.status)
+                  "px-1.5 py-0.5 rounded mr-2 border",
+                  getStatusColor(selectedUnit.status),
+                  selectedUnit.status === 'active' ? "border-eeg-green/30" : 
+                  selectedUnit.status === 'damaged' ? "border-eeg-yellow/30" :
+                  selectedUnit.status === 'returning' ? "border-egypt-blue/30" :
+                  "border-enemy/30"
                 )}>
                   {selectedUnit.status?.toUpperCase() || "UNKNOWN"}
                 </span>
                 <span className={cn(
-                  "px-1.5 py-0.5 rounded",
-                  selectedUnit.communicationStatus === 'available' ? "bg-eeg-green/20 text-eeg-green" :
-                  selectedUnit.communicationStatus === 'busy' ? "bg-eeg-yellow/20 text-eeg-yellow" :
-                  "bg-enemy/20 text-enemy"
+                  "px-1.5 py-0.5 rounded border",
+                  selectedUnit.communicationStatus === 'available' ? "bg-eeg-green/20 text-eeg-green border-eeg-green/30" :
+                  selectedUnit.communicationStatus === 'busy' ? "bg-eeg-yellow/20 text-eeg-yellow border-eeg-yellow/30" :
+                  "bg-enemy/20 text-enemy border-enemy/30"
                 )}>
                   COMM: {selectedUnit.communicationStatus?.toUpperCase() || "UNKNOWN"}
                 </span>
               </div>
             </h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-              <div>
+              <div className="bg-background/30 rounded p-2">
                 <div className="text-muted-foreground text-xs">CALLSIGN</div>
-                <div>{selectedUnit.callsign}</div>
+                <div className="font-medium">{selectedUnit.callsign}</div>
               </div>
-              <div>
+              <div className="bg-background/30 rounded p-2">
                 <div className="text-muted-foreground text-xs">TYPE</div>
-                <div className="flex items-center">
+                <div className="flex items-center font-medium">
                   {getUnitIcon(selectedUnit.type)}
                   <span className="ml-1 capitalize">{selectedUnit.type}</span>
                 </div>
               </div>
-              <div>
+              <div className="bg-background/30 rounded p-2">
                 <div className="text-muted-foreground text-xs">ALLIANCE</div>
-                <div className="capitalize">{selectedUnit.alliance}</div>
+                <div className="capitalize font-medium">{selectedUnit.alliance}</div>
               </div>
-              <div>
+              <div className="bg-background/30 rounded p-2">
                 <div className="text-muted-foreground text-xs">HEADING</div>
-                <div>{selectedUnit.heading}°</div>
+                <div className="font-medium flex items-center">
+                  <span>{selectedUnit.heading}°</span>
+                  <div 
+                    className="ml-2 w-4 h-4 border border-white/50 rounded-full flex items-center justify-center"
+                    style={{ transform: `rotate(${selectedUnit.heading}deg)` }}
+                  >
+                    <div className="w-2 h-0.5 bg-white"></div>
+                  </div>
+                </div>
               </div>
               {selectedUnit.speed && (
-                <div>
+                <div className="bg-background/30 rounded p-2">
                   <div className="text-muted-foreground text-xs">SPEED</div>
-                  <div>{selectedUnit.speed} {selectedUnit.type === 'aircraft' ? 'KTS' : 'KM/H'}</div>
+                  <div className="font-medium">{selectedUnit.speed} {selectedUnit.type === 'aircraft' ? 'KTS' : 'KM/H'}</div>
                 </div>
               )}
               {selectedUnit.altitude && (
-                <div>
+                <div className="bg-background/30 rounded p-2">
                   <div className="text-muted-foreground text-xs">ALTITUDE</div>
-                  <div>{selectedUnit.altitude.toLocaleString()} FT</div>
+                  <div className="font-medium">{selectedUnit.altitude.toLocaleString()} FT</div>
                 </div>
               )}
-              <div>
+              <div className="bg-background/30 rounded p-2">
                 <div className="text-muted-foreground text-xs">POSITION</div>
-                <div className="text-xs">
+                <div className="text-xs font-medium">
                   {selectedUnit.position.lat.toFixed(4)}, {selectedUnit.position.lng.toFixed(4)}
                 </div>
               </div>
               {selectedUnit.terrain && (
-                <div>
+                <div className="bg-background/30 rounded p-2">
                   <div className="text-muted-foreground text-xs">TERRAIN</div>
-                  <div className="capitalize">{selectedUnit.terrain}</div>
+                  <div className="capitalize font-medium">{selectedUnit.terrain}</div>
                 </div>
               )}
               {selectedUnit.mission && (
-                <div>
+                <div className="bg-background/30 rounded p-2">
                   <div className="text-muted-foreground text-xs">MISSION</div>
-                  <div className="capitalize">{selectedUnit.mission}</div>
+                  <div className="capitalize font-medium">{selectedUnit.mission}</div>
                 </div>
               )}
               {selectedUnit.commander && (
-                <div>
+                <div className="bg-background/30 rounded p-2">
                   <div className="text-muted-foreground text-xs">COMMANDER</div>
-                  <div>{selectedUnit.commander}</div>
+                  <div className="font-medium">{selectedUnit.commander}</div>
                 </div>
               )}
               {selectedUnit.position.elevation && (
-                <div>
+                <div className="bg-background/30 rounded p-2">
                   <div className="text-muted-foreground text-xs">ELEVATION</div>
-                  <div>{selectedUnit.position.elevation} M</div>
+                  <div className="font-medium">{selectedUnit.position.elevation} M</div>
                 </div>
               )}
             </div>
