@@ -5,6 +5,7 @@ import AircraftStatus from "@/components/AircraftStatus";
 import TacticalRadar from "@/components/TacticalRadar";
 import MissileStatus from "@/components/MissileStatus";
 import GroundControl from "@/components/GroundControl";
+import SignalIntelligence from "@/components/SignalIntelligence";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -68,10 +69,15 @@ const Index = () => {
             </div>
             
             {/* Second row */}
-            <div className="col-span-12 md:col-span-6">
+            <div className="col-span-12 md:col-span-8">
               <TacticalRadar className="h-full" />
             </div>
-            <div className="col-span-12 md:col-span-6">
+            <div className="col-span-12 md:col-span-4">
+              <SignalIntelligence className="h-full" />
+            </div>
+            
+            {/* Third row */}
+            <div className="col-span-12">
               <GroundControl className="h-full" />
             </div>
           </main>
