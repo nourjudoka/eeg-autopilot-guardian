@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { cn } from "@/lib/utils";
-import { Map, Radar, Flag, Plane, Shield, Mountains, Radio, Volume2, VolumeX, Mic, MicOff } from 'lucide-react';
+import { Map, Radar, Flag, Plane, Shield, Mountain, Radio, Volume2, VolumeX, Mic, MicOff } from 'lucide-react';
 
 interface Coordinate {
   lat: number;
@@ -52,11 +51,9 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
   const [currentMessage, setCurrentMessage] = useState('');
   const commLogRef = useRef<HTMLDivElement>(null);
 
-  // Generate dummy terrain data for Egyptian landscape
   useEffect(() => {
     const generateTerrainFeatures = () => {
       const features: TerrainFeature[] = [
-        // Sinai Mountains
         {
           id: 'mountains-1',
           name: 'Sinai Mountains',
@@ -68,7 +65,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
             { lat: 28.3, lng: 34.2, elevation: 1600 },
           ]
         },
-        // Western Desert
         {
           id: 'desert-1',
           name: 'Western Desert',
@@ -80,7 +76,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
             { lat: 27.5, lng: 27.5, elevation: 190 },
           ]
         },
-        // Nile Delta
         {
           id: 'urban-1',
           name: 'Nile Delta',
@@ -92,7 +87,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
             { lat: 30.3, lng: 31.5, elevation: 12 },
           ]
         },
-        // Mediterranean Coast
         {
           id: 'water-1',
           name: 'Mediterranean Coast',
@@ -104,7 +98,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
             { lat: 31.0, lng: 29.5, elevation: 0 },
           ]
         },
-        // Red Sea Coast
         {
           id: 'water-2',
           name: 'Red Sea Coast',
@@ -124,7 +117,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
     generateTerrainFeatures();
   }, []);
 
-  // Generate dummy data for Egyptian Army units
   useEffect(() => {
     const generateDummyData = () => {
       const unitTypes: ('aircraft' | 'ground' | 'defense' | 'naval')[] = ['aircraft', 'ground', 'defense', 'naval'];
@@ -137,20 +129,17 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
       const missionTypes = ['patrol', 'reconnaissance', 'escort', 'interception', 'defense', 'strike'];
       const commanderNames = ['Col. Hassan', 'Gen. Mahmoud', 'Capt. Farid', 'Maj. Ibrahim', 'Lt. Col. Ahmed', 'Brig. Mostafa'];
       
-      // Define general area around Egypt
       const egyptBounds = {
-        minLat: 22.0, maxLat: 32.0, // Latitude bounds
-        minLng: 24.0, maxLng: 36.0  // Longitude bounds
+        minLat: 22.0, maxLat: 32.0,
+        minLng: 24.0, maxLng: 36.0
       };
       
       const dummyUnits: Unit[] = [];
       
-      // Generate 70 units (more than before)
       for (let i = 0; i < 70; i++) {
         const type = unitTypes[Math.floor(Math.random() * unitTypes.length)];
         const alliance = allianceTypes[Math.floor(Math.random() * allianceTypes.length)];
         
-        // Select callsign based on type
         let callsignBase;
         if (type === 'aircraft') {
           callsignBase = aircraftCallsigns[Math.floor(Math.random() * aircraftCallsigns.length)];
@@ -162,7 +151,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
           callsignBase = navalCallsigns[Math.floor(Math.random() * navalCallsigns.length)];
         }
         
-        // Generate random position within Egypt bounds
         const lat = egyptBounds.minLat + Math.random() * (egyptBounds.maxLat - egyptBounds.minLat);
         const lng = egyptBounds.minLng + Math.random() * (egyptBounds.maxLng - egyptBounds.minLng);
         
@@ -194,20 +182,16 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
     
     generateDummyData();
     
-    // Update some units' positions periodically
     const interval = setInterval(() => {
       setUnits(prevUnits => {
         return prevUnits.map(unit => {
-          // Only move some units randomly
           if (Math.random() > 0.7) {
             const speedFactor = unit.type === 'aircraft' ? 0.05 : 0.01;
             const headingRad = unit.heading * (Math.PI / 180);
             
-            // Calculate new position based on heading and speed
             const newLat = unit.position.lat + Math.sin(headingRad) * speedFactor;
             const newLng = unit.position.lng + Math.cos(headingRad) * speedFactor;
             
-            // Small chance to change heading
             const newHeading = Math.random() > 0.8 
               ? (unit.heading + (Math.random() * 20 - 10)) % 360 
               : unit.heading;
@@ -220,14 +204,11 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
                 elevation: unit.position.elevation 
               },
               heading: newHeading,
-              // Slight changes in speed and altitude for aircraft
               speed: unit.speed ? Math.max(unit.type === 'aircraft' ? 200 : 0, Math.min(unit.type === 'aircraft' ? 800 : 80, unit.speed + (Math.random() * 20 - 10))) : undefined,
               altitude: unit.altitude ? Math.max(5000, Math.min(45000, unit.altitude + (Math.random() * 1000 - 500))) : undefined,
-              // Random chance to change status
               status: Math.random() > 0.9 ? 
                 ['active', 'damaged', 'returning', 'engaging'][Math.floor(Math.random() * 4)] as 'active' | 'damaged' | 'returning' | 'engaging' 
                 : unit.status,
-              // Random chance to change communication status
               communicationStatus: Math.random() > 0.9 ?
                 ['available', 'busy', 'offline'][Math.floor(Math.random() * 3)] as 'available' | 'busy' | 'offline'
                 : unit.communicationStatus
@@ -241,12 +222,10 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Simulate communication messages
   useEffect(() => {
     if (!communicationActive) return;
     
     const communicationInterval = setInterval(() => {
-      // Only add new message sometimes
       if (Math.random() > 0.7) {
         const availableUnits = units.filter(u => u.communicationStatus === 'available' && u.alliance === 'ally');
         if (availableUnits.length > 0) {
@@ -283,7 +262,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
     return () => clearInterval(communicationInterval);
   }, [communicationActive, units]);
 
-  // Auto-scroll communication log
   useEffect(() => {
     if (commLogRef.current && communicationLog.length > 0) {
       commLogRef.current.scrollTop = commLogRef.current.scrollHeight;
@@ -329,15 +307,9 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
   };
 
   const filteredUnits = units.filter(unit => {
-    // Filter by type
     if (filterType !== 'all' && unit.type !== filterType) return false;
-    
-    // Filter by alliance
     if (filterAlliance !== 'all' && unit.alliance !== filterAlliance) return false;
-    
-    // Filter by search term
     if (searchTerm && !unit.callsign.toLowerCase().includes(searchTerm.toLowerCase())) return false;
-    
     return true;
   });
 
@@ -359,7 +331,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
     setCommunicationLog(prev => [...prev, newMessage]);
     setCurrentMessage('');
     
-    // Simulate response after delay
     setTimeout(() => {
       if (!selectedUnit) return;
       
@@ -383,29 +354,22 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
     }, 1500 + Math.random() * 1000);
   };
 
-  // Convert lat/lng to pixel positions for our simple map view
   const getMapPosition = (coord: Coordinate) => {
-    // This is a very simplified projection for demonstration
-    // In a real app, you would use a proper map library like Mapbox or Leaflet
-    const mapWidth = 100; // percentage
-    const mapHeight = 100; // percentage
+    const mapWidth = 100;
+    const mapHeight = 100;
     
-    // Center the map on Egypt
     const centerLat = mapCenter.lat;
     const centerLng = mapCenter.lng;
     
-    // Calculate view range based on zoom
     const latRange = 20 / mapZoom;
     const lngRange = 30 / mapZoom;
     
-    // Calculate position percentage
     const x = ((coord.lng - (centerLng - lngRange/2)) / lngRange) * mapWidth;
     const y = (1 - ((coord.lat - (centerLat - latRange/2)) / latRange)) * mapHeight;
     
     return { x, y };
   };
 
-  // Convert coordinates to SVG polygon points
   const coordsToPolygon = (coords: Coordinate[]) => {
     return coords.map(coord => {
       const { x, y } = getMapPosition(coord);
@@ -417,7 +381,7 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
     <div className={cn("egypt-glassmorphism", className)}>
       <div className="glass-panel-header">
         <h3 className="egypt-header flex items-center">
-          <Mountains className="h-5 w-5 mr-2" />
+          <Mountain className="h-5 w-5 mr-2" />
           GIS Terrain Tracking System
         </h3>
         <div className="ml-auto flex items-center space-x-2">
@@ -493,9 +457,7 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
       
       <div className="p-4 grid grid-cols-1 md:grid-cols-5 gap-4">
         <div className="md:col-span-3 rounded-lg overflow-hidden border border-egypt-gold/20 relative aspect-[4/3] desert-gradient">
-          {/* Map visualization */}
           <div className="absolute inset-0">
-            {/* Simple map grid lines */}
             <div className="absolute inset-0 grid grid-cols-6 grid-rows-6">
               {Array.from({length: 6}).map((_, i) => (
                 <div key={`col-${i}`} className="border-r border-egypt-gold/10 h-full"></div>
@@ -505,9 +467,7 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
               ))}
             </div>
             
-            {/* Map Features - simplified for this example */}
             <div className="absolute inset-0 p-4">
-              {/* Terrain features */}
               {showTerrain && terrainFeatures.map(feature => (
                 <svg key={feature.id} className="absolute inset-0" preserveAspectRatio="none" viewBox="0 0 100 100">
                   <polygon 
@@ -516,7 +476,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
                     stroke="rgba(255,255,255,0.2)"
                     strokeWidth="0.5"
                   />
-                  {/* Feature name */}
                   {feature.type !== 'water' && (
                     <text
                       x={getMapPosition(feature.coordinates[0]).x + "%"}
@@ -531,22 +490,17 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
                 </svg>
               ))}
               
-              {/* Egyptian borders - simplified */}
               <div className="absolute w-1/3 h-1/2 border border-egypt-nile/30 rounded-lg" 
                 style={{top: '20%', left: '40%'}}></div>
               
-              {/* Nile river - simplified */}
               <div className="absolute w-1 h-1/2 bg-egypt-nile/30"
                 style={{top: '25%', left: '55%'}}></div>
                 
-              {/* Mediterranean Sea */}
               <div className="absolute top-0 left-0 right-0 h-1/6 bg-egypt-nile/20 rounded-b-lg"></div>
               
-              {/* Red Sea */}
               <div className="absolute top-1/4 right-0 w-1/6 bottom-0 bg-egypt-nile/20 rounded-l-lg"></div>
             </div>
             
-            {/* Units on the map */}
             {filteredUnits.map(unit => {
               const { x, y } = getMapPosition(unit.position);
               const isSelected = selectedUnit?.id === unit.id;
@@ -567,7 +521,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
                   }}
                   onClick={() => handleSelectUnit(unit)}
                 >
-                  {/* Unit direction indicator */}
                   <div 
                     className={cn(
                       "absolute h-4 w-0.5 top-0 left-1/2 -translate-x-1/2 -translate-y-full",
@@ -576,7 +529,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
                     )}
                   ></div>
                   
-                  {/* Status indicator */}
                   <div 
                     className={cn(
                       "absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full",
@@ -584,7 +536,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
                     )}
                   ></div>
                   
-                  {/* Unit callsign */}
                   {isSelected && (
                     <div className="absolute top-4 left-0 text-xs whitespace-nowrap bg-background/80 px-1 rounded z-10">
                       {unit.callsign}
@@ -595,7 +546,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
             })}
           </div>
           
-          {/* Map controls */}
           <div className="absolute bottom-2 right-2 flex flex-col space-y-1">
             <button 
               className="w-6 h-6 bg-background/80 rounded flex items-center justify-center text-lg"
@@ -620,14 +570,12 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
             </button>
           </div>
           
-          {/* Coordinates display */}
           <div className="absolute bottom-2 left-2 text-xs bg-background/80 px-2 py-1 rounded">
             LAT: {mapCenter.lat.toFixed(4)} | LNG: {mapCenter.lng.toFixed(4)} | ZOOM: {mapZoom}
           </div>
         </div>
         
         <div className="md:col-span-2 grid grid-rows-2 gap-3">
-          {/* Unit list */}
           <div className="bg-radar-bg rounded-lg p-2 text-sm">
             <h4 className="text-egypt-gold border-b border-egypt-gold/20 pb-1 mb-2">Units ({filteredUnits.length})</h4>
             <div className="h-[calc(100%-2rem)] overflow-y-auto pr-1 space-y-1 max-h-36">
@@ -660,7 +608,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
             </div>
           </div>
           
-          {/* Communication panel */}
           <div className="bg-radar-bg rounded-lg p-2 text-sm">
             <div className="flex items-center justify-between border-b border-egypt-gold/20 pb-1 mb-2">
               <h4 className="text-egypt-gold flex items-center">
@@ -691,7 +638,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
               </div>
             </div>
             
-            {/* Communication log */}
             <div ref={commLogRef} className="h-24 overflow-y-auto text-xs mb-2 bg-background/20 rounded p-1">
               {communicationLog.length === 0 ? (
                 <div className="text-center text-muted-foreground pt-8">
@@ -712,7 +658,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
               )}
             </div>
             
-            {/* Message input */}
             <div className="flex items-center">
               <input
                 type="text"
@@ -735,7 +680,6 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
         </div>
       </div>
       
-      {/* Selected unit details */}
       {selectedUnit && (
         <div className="p-4 pt-0">
           <div className="bg-radar-bg rounded-lg p-3">
