@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -62,6 +61,12 @@ export default {
         'radar-bg': "rgba(30, 41, 59, 0.5)",
         'glass': "rgba(17, 25, 40, 0.55)",
         'glass-border': "rgba(255, 255, 255, 0.125)",
+        'egypt-sand': "#D2B48C",
+        'egypt-desert': "#A0785A",
+        'egypt-nile': "#254B5B",
+        'egypt-gold': "#D4AF37",
+        'egypt-red': "#C0392B",
+        'egypt-blue': "#1D4E89"
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -96,6 +101,14 @@ export default {
         "fade-in": {
           "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" }
+        },
+        "rotate": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" }
+        },
+        "ping-slow": {
+          "0%, 100%": { transform: "scale(1)", opacity: "1" },
+          "50%": { transform: "scale(1.2)", opacity: "0.5" }
         }
       },
       animation: {
@@ -105,7 +118,9 @@ export default {
         "wave": "wave 1.2s ease-in-out infinite",
         "pulse-subtle": "pulse-subtle 2s ease-in-out infinite",
         "blink": "blink 1s ease-in-out infinite",
-        "fade-in": "fade-in 0.3s ease-out"
+        "fade-in": "fade-in 0.3s ease-out",
+        "rotate": "rotate 10s linear infinite",
+        "ping-slow": "ping-slow 2s ease-in-out infinite"
       },
     },
   },

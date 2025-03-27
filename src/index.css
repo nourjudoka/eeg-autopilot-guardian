@@ -5,10 +5,10 @@
 
 @layer base {
   :root {
-    --background: 210 30% 8%;
+    --background: 215 30% 10%;
     --foreground: 210 40% 98%;
 
-    --card: 222 25% 12%;
+    --card: 220 25% 15%;
     --card-foreground: 210 40% 98%;
 
     --popover: 222 25% 10%;
@@ -45,6 +45,7 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23254B5B' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
   }
 }
 
@@ -54,11 +55,15 @@
   }
   
   .glass-panel-header {
-    @apply border-b border-glass-border px-4 py-3 flex items-center;
+    @apply border-b border-glass-border px-4 py-3 flex items-center bg-gradient-to-r from-egypt-nile/30 to-transparent;
   }
   
   .glassmorphism {
-    @apply bg-glass backdrop-blur-lg border border-glass-border rounded-lg overflow-hidden;
+    @apply bg-glass backdrop-blur-lg border border-glass-border rounded-lg overflow-hidden shadow-lg;
+  }
+  
+  .egypt-glassmorphism {
+    @apply bg-glass backdrop-blur-lg border border-egypt-gold/20 rounded-lg overflow-hidden shadow-lg;
   }
   
   .dot-pattern {
@@ -83,7 +88,15 @@
   .eeg-wave-bar:nth-child(7) { animation-delay: -0.45s; }
   
   .radar-sweep {
-    @apply absolute left-1/2 top-1/2 w-1/2 h-1 bg-gradient-to-r from-primary/20 to-primary/80 origin-left rounded-full;
+    @apply absolute left-1/2 top-1/2 w-1/2 h-1 bg-gradient-to-r from-egypt-gold/20 to-egypt-gold/80 origin-left rounded-full;
     transform-origin: left center;
+  }
+  
+  .egypt-header {
+    @apply text-lg font-semibold text-egypt-gold;
+  }
+  
+  .desert-gradient {
+    @apply bg-gradient-to-br from-egypt-sand/10 to-egypt-desert/10;
   }
 }
