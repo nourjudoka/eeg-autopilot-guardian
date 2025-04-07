@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { cn } from "@/lib/utils";
-import { Plane, AlertTriangle, Info } from 'lucide-react';
+import { Plane, AlertTriangle, Info, Lock, Shield, Clock } from 'lucide-react';
 
 interface Aircraft {
   id: string;
@@ -15,6 +15,18 @@ interface Aircraft {
   damageAreas: DamageArea[];
   status: 'operational' | 'combat' | 'returning' | 'damaged';
   missionTime: number; // in minutes
+  flyingHours: number; // total flying hours
+  lastMaintenance: string; // date of last maintenance
+  maintenanceStatus: 'good' | 'due' | 'overdue';
+  maintenanceHistory: MaintenanceRecord[];
+}
+
+interface MaintenanceRecord {
+  date: string;
+  type: 'routine' | 'major' | 'repair';
+  description: string;
+  technician: string;
+  hoursAdded: number;
 }
 
 interface DamageArea {
@@ -42,6 +54,13 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
       fuelRemaining: 72,
       status: 'combat',
       missionTime: 43,
+      flyingHours: 1245.8,
+      lastMaintenance: '2025-03-12',
+      maintenanceStatus: 'good',
+      maintenanceHistory: [
+        { date: '2025-03-12', type: 'routine', description: 'Routine inspection and oil change', technician: 'Eng. M. Hassan', hoursAdded: 120 },
+        { date: '2025-01-05', type: 'major', description: 'Engine overhaul and avionics update', technician: 'Eng. K. Mahmoud', hoursAdded: 500 }
+      ],
       damageAreas: [
         { name: 'Airframe', status: 'operational', percentage: 98, description: 'Minor stress damage on left wing' },
         { name: 'Propulsion', status: 'operational', percentage: 100, description: 'Systems nominal' },
@@ -61,6 +80,13 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
       fuelRemaining: 83,
       status: 'operational',
       missionTime: 21,
+      flyingHours: 478.3,
+      lastMaintenance: '2025-03-22',
+      maintenanceStatus: 'good',
+      maintenanceHistory: [
+        { date: '2025-03-22', type: 'routine', description: 'Pre-flight check and system diagnostics', technician: 'Eng. A. Saleh', hoursAdded: 150 },
+        { date: '2025-02-11', type: 'routine', description: 'Software update and sensor calibration', technician: 'Eng. L. Farid', hoursAdded: 100 }
+      ],
       damageAreas: [
         { name: 'Airframe', status: 'operational', percentage: 100, description: 'No damage detected' },
         { name: 'Propulsion', status: 'operational', percentage: 100, description: 'Systems nominal' },
@@ -80,6 +106,14 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
       fuelRemaining: 45,
       status: 'damaged',
       missionTime: 78,
+      flyingHours: 2156.7,
+      lastMaintenance: '2025-02-18',
+      maintenanceStatus: 'overdue',
+      maintenanceHistory: [
+        { date: '2025-02-18', type: 'repair', description: 'Combat damage repair to wing structure', technician: 'Eng. T. Youssef', hoursAdded: 200 },
+        { date: '2025-01-25', type: 'routine', description: 'Routine inspection and hydraulics check', technician: 'Eng. R. Amr', hoursAdded: 120 },
+        { date: '2024-11-03', type: 'major', description: 'Complete avionics overhaul', technician: 'Eng. S. Khalid', hoursAdded: 600 }
+      ],
       damageAreas: [
         { name: 'Airframe', status: 'damaged', percentage: 68, description: 'Structural damage to right wing' },
         { name: 'Propulsion', status: 'operational', percentage: 87, description: 'Minor thrust reduction' },
@@ -99,6 +133,14 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
       fuelRemaining: 28,
       status: 'returning',
       missionTime: 112,
+      flyingHours: 3645.1,
+      lastMaintenance: '2025-03-05',
+      maintenanceStatus: 'due',
+      maintenanceHistory: [
+        { date: '2025-03-05', type: 'routine', description: 'Routine inspection and hydraulics maintenance', technician: 'Eng. N. Mostafa', hoursAdded: 150 },
+        { date: '2025-01-12', type: 'repair', description: 'Weapons bay repair and recalibration', technician: 'Eng. H. Gamal', hoursAdded: 80 },
+        { date: '2024-10-22', type: 'major', description: 'Engine replacement and testing', technician: 'Eng. M. Adel', hoursAdded: 800 }
+      ],
       damageAreas: [
         { name: 'Airframe', status: 'operational', percentage: 92, description: 'Minor stress damage detected' },
         { name: 'Propulsion', status: 'operational', percentage: 89, description: 'Fuel efficiency reduced' },
@@ -110,6 +152,7 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
   ]);
   
   const [showDamageDetails, setShowDamageDetails] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'status' | 'maintenance'>('status');
   
   // Initialize with first aircraft
   useEffect(() => {
@@ -129,6 +172,7 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
           const headingChange = Math.floor(Math.random() * 3 - 1);
           const fuelDecrease = aircraft.status === 'combat' ? 0.2 : 0.1;
           const missionTimeIncrease = 1/60; // 1 second in minutes
+          const flyingHoursIncrease = 1/3600; // 1 second in hours
           
           // Random autopilot change (rare)
           const autopilot = Math.random() > 0.95 ? !aircraft.autopilot : aircraft.autopilot;
@@ -190,7 +234,8 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
             autopilot,
             damageAreas: updatedDamageAreas,
             status: aircraftStatus,
-            missionTime: aircraft.missionTime + missionTimeIncrease
+            missionTime: aircraft.missionTime + missionTimeIncrease,
+            flyingHours: aircraft.flyingHours + flyingHoursIncrease
           };
         });
       });
@@ -222,6 +267,17 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
         return 'text-eeg-red';
     }
   };
+
+  const getMaintenanceStatusColor = (status: 'good' | 'due' | 'overdue') => {
+    switch (status) {
+      case 'good':
+        return 'text-eeg-green';
+      case 'due':
+        return 'text-egypt-gold';
+      case 'overdue':
+        return 'text-eeg-red';
+    }
+  };
   
   const handleToggleDamageDetails = (name: string) => {
     if (showDamageDetails === name) {
@@ -236,9 +292,22 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
   };
   
   const currentAircraft = getCurrentAircraft();
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  };
   
   return (
-    <div className={cn("glassmorphism", className)}>
+    <div className={cn("glassmorphism relative", className)}>
+      {/* ISO 27001 Compliance Indicator */}
+      <div className="absolute top-1 right-1 flex items-center gap-1 text-[10px] text-egypt-gold px-1 py-0.5 bg-background/50 rounded">
+        <Lock className="w-3 h-3" />
+        <span>ISO 27001</span>
+        <Shield className="w-3 h-3" />
+        <span>AES/RSA</span>
+      </div>
+      
       <div className="glass-panel-header">
         <h3 className="text-lg font-medium flex-1">Aircraft Status</h3>
         {currentAircraft && (
@@ -282,8 +351,28 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
             ))}
           </div>
         </div>
+
+        {/* Tabs */}
+        <div className="flex border-b border-border/20 mb-4">
+          <div 
+            className={cn("py-2 px-4 text-sm cursor-pointer border-b-2", 
+              activeTab === 'status' ? "border-egypt-gold text-egypt-gold" : "border-transparent"
+            )}
+            onClick={() => setActiveTab('status')}
+          >
+            Status
+          </div>
+          <div 
+            className={cn("py-2 px-4 text-sm cursor-pointer border-b-2", 
+              activeTab === 'maintenance' ? "border-egypt-gold text-egypt-gold" : "border-transparent"
+            )}
+            onClick={() => setActiveTab('maintenance')}
+          >
+            Maintenance
+          </div>
+        </div>
         
-        {currentAircraft && (
+        {currentAircraft && activeTab === 'status' && (
           <>
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="bg-radar-bg rounded-md p-2">
@@ -423,6 +512,66 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
                     </div>
                   </div>
                 )}
+              </div>
+            </div>
+          </>
+        )}
+
+        {currentAircraft && activeTab === 'maintenance' && (
+          <>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="bg-radar-bg rounded-md p-2">
+                <div className="text-xs text-muted-foreground mb-1">TOTAL FLYING HOURS</div>
+                <div className="text-lg font-medium">{currentAircraft.flyingHours.toFixed(1)}</div>
+              </div>
+              <div className="bg-radar-bg rounded-md p-2">
+                <div className="text-xs text-muted-foreground mb-1">NEXT MAINTENANCE</div>
+                <div className={cn("text-sm font-medium", getMaintenanceStatusColor(currentAircraft.maintenanceStatus))}>
+                  {currentAircraft.maintenanceStatus === 'good' ? 'SCHEDULED' : 
+                   currentAircraft.maintenanceStatus === 'due' ? 'DUE SOON' : 'OVERDUE'}
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <div className="flex justify-between mb-1">
+                <span className="text-sm">Last Maintenance</span>
+                <span className="text-sm">{formatDate(currentAircraft.lastMaintenance)}</span>
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <h4 className="text-md font-medium mb-2">Maintenance History</h4>
+              <div className="space-y-2 max-h-[180px] overflow-y-auto pr-2 scrollbar-thin">
+                {currentAircraft.maintenanceHistory.map((record, index) => (
+                  <div key={index} className="bg-radar-bg/50 p-2 rounded text-xs">
+                    <div className="flex justify-between items-center mb-1">
+                      <div className={cn("font-medium", 
+                        record.type === 'routine' ? "text-eeg-green" : 
+                        record.type === 'repair' ? "text-eeg-yellow" : 
+                        "text-egypt-gold"
+                      )}>
+                        {record.type.charAt(0).toUpperCase() + record.type.slice(1)}
+                      </div>
+                      <div className="text-muted-foreground">{formatDate(record.date)}</div>
+                    </div>
+                    <div>{record.description}</div>
+                    <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
+                      <div>Technician: {record.technician}</div>
+                      <div>Hours Added: {record.hoursAdded}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-3 pt-2 border-t border-border/10 text-xs">
+              <div className="flex items-center justify-between text-muted-foreground">
+                <span>Maintenance Records</span>
+                <span className="text-egypt-gold flex items-center">
+                  <Lock className="w-3 h-3 mr-1" />
+                  AES-256 Encrypted
+                </span>
               </div>
             </div>
           </>

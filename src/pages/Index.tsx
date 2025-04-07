@@ -8,21 +8,27 @@ import GroundControl from "@/components/GroundControl";
 import SignalIntelligence from "@/components/SignalIntelligence";
 import GISTracking from "@/components/GISTracking";
 import WalkieTalkie from "@/components/WalkieTalkie";
-import { MapPin } from "lucide-react";
+import { MapPin, Shield, Lock } from "lucide-react";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
   const [initialized, setInitialized] = useState(false);
+  const [securityStatus, setSecurityStatus] = useState<'verifying' | 'secure'>('verifying');
 
   // Simulate system initialization
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
       
-      // Sequential component initialization
+      // Simulate security verification
       setTimeout(() => {
-        setInitialized(true);
-      }, 1000);
+        setSecurityStatus('secure');
+        
+        // Sequential component initialization
+        setTimeout(() => {
+          setInitialized(true);
+        }, 1000);
+      }, 500);
     }, 1500);
     
     return () => clearTimeout(timer);
@@ -62,8 +68,17 @@ const Index = () => {
               </p>
             </div>
             <div className="text-sm">
-              <div className="bg-radar-bg px-3 py-1 rounded-md border border-egypt-gold/20">
-                <span className="text-egypt-gold">SYSTEM ACTIVE</span> | {new Date().toLocaleString()}
+              <div className="bg-radar-bg px-3 py-1 rounded-md border border-egypt-gold/20 flex items-center">
+                <span className="text-egypt-gold mr-2">SYSTEM ACTIVE</span> 
+                <span className="mr-2">|</span>
+                <span>{new Date().toLocaleString()}</span>
+                <span className="ml-2 mr-1">|</span>
+                <div className="flex items-center">
+                  <Shield className="h-3 w-3 text-eeg-green" />
+                  <span className="ml-1 text-xs text-eeg-green">
+                    {securityStatus === 'verifying' ? 'VERIFYING SECURITY' : 'ISO 27001'}
+                  </span>
+                </div>
               </div>
             </div>
           </header>
@@ -100,7 +115,15 @@ const Index = () => {
           
           <footer className="mt-6 text-center text-xs text-muted-foreground">
             <div className="text-egypt-gold">CLASSIFIED: ARAB ACADEMY FOR SCIENCE, TECHNOLOGY & MARITIME TRANSPORT - EMOTIV INSIGHT EEG MONITORING SYSTEM</div>
-            <div>Autopilot Guardian Protocol v3.0.1 - North African Region Command</div>
+            <div className="flex items-center justify-center gap-2">
+              <span>Autopilot Guardian Protocol v3.0.1 - North African Region Command</span>
+              <span className="flex items-center">
+                <Lock className="h-3 w-3 text-egypt-gold mx-1" />
+                <span className="text-egypt-gold">AES-256/RSA-4096 Encryption</span>
+                <Shield className="h-3 w-3 text-egypt-gold mx-1" />
+                <span className="text-egypt-gold">ISO 27001 Compliant</span>
+              </span>
+            </div>
           </footer>
         </div>
       )}
