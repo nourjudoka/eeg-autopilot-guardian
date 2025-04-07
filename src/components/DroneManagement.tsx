@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Search, Drone, Activity, Battery, Signal, MapPin, Radio } from "lucide-react";
+import { Search, Activity, Battery, Signal, MapPin, Radio, Plane } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 
 interface DroneManagementProps {
@@ -128,7 +128,7 @@ const DroneManagement = ({ className }: DroneManagementProps) => {
       <CardHeader className="glass-panel-header">
         <div className="flex justify-between items-center w-full">
           <div className="egypt-header">
-            <Drone className="w-5 h-5 mr-2 text-egypt-gold" />
+            <Plane className="w-5 h-5 mr-2 text-egypt-gold" />
             UAV Drone Management System
           </div>
           <div className="relative w-64">
@@ -312,7 +312,7 @@ const DroneManagement = ({ className }: DroneManagementProps) => {
               <div>
                 <div className="bg-black/60 p-4 rounded-lg text-center h-[200px] flex items-center justify-center">
                   <div className="text-muted-foreground">
-                    <Drone className="h-12 w-12 mx-auto mb-2 text-green-500" />
+                    <Plane className="h-12 w-12 mx-auto mb-2 text-green-500" />
                     Live Feed Available
                   </div>
                 </div>
