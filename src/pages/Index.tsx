@@ -9,6 +9,8 @@ import SignalIntelligence from "@/components/SignalIntelligence";
 import GISTracking from "@/components/GISTracking";
 import WalkieTalkie from "@/components/WalkieTalkie";
 import MissionManagement from "@/components/MissionManagement";
+import AirportManagement from "@/components/AirportManagement";
+import DroneManagement from "@/components/DroneManagement";
 import { MapPin, Shield, Lock } from "lucide-react";
 
 const Index = () => {
@@ -104,6 +106,14 @@ const Index = () => {
             
             <div className="col-span-12">
               <MissionManagement className="h-[350px] mb-4" />
+            </div>
+
+            <div className="col-span-12 md:col-span-6">
+              <AirportManagement className="h-[500px] mb-4" />
+            </div>
+            
+            <div className="col-span-12 md:col-span-6">
+              <DroneManagement className="h-[500px] mb-4" />
             </div>
             
             <div className="col-span-12">
