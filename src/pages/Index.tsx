@@ -42,7 +42,7 @@ const Index = () => {
             <div className="h-full bg-egypt-gold animate-progress"></div>
           </div>
           <div className="mt-4 text-sm text-muted-foreground">
-            Egyptian Armed Forces - Advanced Systems Initialization...
+            Arab Academy For Science, Technology & Maritime Transport - Advanced Systems Initialization...
           </div>
         </div>
       ) : (
@@ -54,7 +54,7 @@ const Index = () => {
                 EEG Autopilot Guardian
               </h1>
               <p className="text-sm text-muted-foreground">
-                Egyptian Armed Forces - North African Region Command
+                Arab Academy For Science, Technology & Maritime Transport - North African Region Command
                 <span className="inline-flex items-center ml-2 text-egypt-gold text-xs">
                   <MapPin className="h-3 w-3 mr-1" />
                   North Africa & Middle East Operations
@@ -99,7 +99,7 @@ const Index = () => {
           </main>
           
           <footer className="mt-6 text-center text-xs text-muted-foreground">
-            <div className="text-egypt-gold">CLASSIFIED: EGYPTIAN ARMED FORCES - EMOTIV INSIGHT EEG MONITORING SYSTEM</div>
+            <div className="text-egypt-gold">CLASSIFIED: ARAB ACADEMY FOR SCIENCE, TECHNOLOGY & MARITIME TRANSPORT - EMOTIV INSIGHT EEG MONITORING SYSTEM</div>
             <div>Autopilot Guardian Protocol v3.0.1 - North African Region Command</div>
           </footer>
         </div>
