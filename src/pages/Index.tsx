@@ -8,6 +8,7 @@ import GroundControl from "@/components/GroundControl";
 import SignalIntelligence from "@/components/SignalIntelligence";
 import GISTracking from "@/components/GISTracking";
 import WalkieTalkie from "@/components/WalkieTalkie";
+import MissionManagement from "@/components/MissionManagement";
 import { MapPin, Shield, Lock } from "lucide-react";
 
 const Index = () => {
@@ -52,8 +53,8 @@ const Index = () => {
           </div>
         </div>
       ) : (
-        <div className="container py-6 relative z-10">
-          <header className="flex justify-between items-center mb-6">
+        <div className="container py-4 relative z-10">
+          <header className="flex justify-between items-center mb-4">
             <div>
               <h1 className="text-2xl font-light text-egypt-gold">
                 <span className="text-sm text-primary mr-2">تكنولوجيا المصرية</span>
@@ -83,37 +84,38 @@ const Index = () => {
             </div>
           </header>
           
-          <main className={`grid grid-cols-12 gap-6 transition-opacity duration-500 ${initialized ? 'opacity-100' : 'opacity-0'}`}>
-            {/* First row - EEG and Communication */}
+          <main className={`grid grid-cols-12 gap-4 transition-opacity duration-500 ${initialized ? 'opacity-100' : 'opacity-0'}`}>
             <div className="col-span-12 md:col-span-3">
-              <EEGMonitor className="h-[300px] mb-6" />
-              <WalkieTalkie className="h-[400px]" />
+              <EEGMonitor className="h-[280px] mb-4" />
+              <WalkieTalkie className="h-[380px]" />
             </div>
             
-            {/* Second row - Aircraft Status and Missile Status */}
             <div className="col-span-12 md:col-span-5">
-              <AircraftStatus className="h-[400px] mb-6" />
-              <MissileStatus className="h-[300px]" />
+              <div className="grid grid-cols-1 gap-4">
+                <AircraftStatus className="h-[380px]" />
+                <MissileStatus className="h-[280px]" />
+              </div>
             </div>
             
-            {/* Third row - Tactical Radar and Signal Intelligence */}
             <div className="col-span-12 md:col-span-4">
-              <TacticalRadar className="h-[400px] mb-6" />
-              <SignalIntelligence className="h-[300px]" />
+              <TacticalRadar className="h-[380px] mb-4" />
+              <SignalIntelligence className="h-[280px]" />
             </div>
             
-            {/* Fourth row - GIS Tracking (full width) */}
             <div className="col-span-12">
-              <GISTracking className="h-[500px]" />
+              <MissionManagement className="h-[350px] mb-4" />
             </div>
             
-            {/* Fifth row - Ground Control (full width) */}
             <div className="col-span-12">
-              <GroundControl className="h-[300px]" />
+              <GISTracking className="h-[350px] mb-4" />
+            </div>
+            
+            <div className="col-span-12">
+              <GroundControl className="h-[280px]" />
             </div>
           </main>
           
-          <footer className="mt-6 text-center text-xs text-muted-foreground">
+          <footer className="mt-4 text-center text-xs text-muted-foreground">
             <div className="text-egypt-gold">CLASSIFIED: ARAB ACADEMY FOR SCIENCE, TECHNOLOGY & MARITIME TRANSPORT - EMOTIV INSIGHT EEG MONITORING SYSTEM</div>
             <div className="flex items-center justify-center gap-2">
               <span>Autopilot Guardian Protocol v3.0.1 - North African Region Command</span>
