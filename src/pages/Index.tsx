@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import EEGMonitor from "@/components/EEGMonitor";
 import AircraftStatus from "@/components/AircraftStatus";
@@ -59,7 +58,6 @@ const Index = () => {
           <header className="flex justify-between items-center mb-4">
             <div>
               <h1 className="text-2xl font-light text-egypt-gold">
-                <span className="text-sm text-primary mr-2">تكنولوجيا المصرية</span>
                 EEG Autopilot Guardian
               </h1>
               <p className="text-sm text-muted-foreground">
