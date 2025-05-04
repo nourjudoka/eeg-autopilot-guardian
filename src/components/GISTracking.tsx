@@ -1,8 +1,11 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { cn } from "@/lib/utils";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { MapPin, Mountain, Plane, Shield, Radio, Ship, Eye, Target, AlertTriangle, Globe, Layers } from 'lucide-react';
+import { 
+  Globe, MapPin, Mountain, Plane, Shield, Radio, Ship, Eye, 
+  Target, AlertTriangle, Layers, Plus, Minus, ArrowUp, ArrowDown,
+  RotateCcw 
+} from 'lucide-react';
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 
 interface GISTrackingProps {
@@ -41,6 +44,7 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
   const [showThreats, setShowThreats] = useState(true);
   const [showLabels, setShowLabels] = useState(true);
   const [showTerrain, setShowTerrain] = useState(true);
+  const [alertCount, setAlertCount] = useState(0);
   
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapDimensions, setMapDimensions] = useState({ width: 0, height: 0 });
@@ -168,6 +172,9 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
           }
         }
       }
+      
+      // Count alerts
+      setAlertCount(mapLocations.filter(loc => loc.status === 'alert').length);
     }, 5000);
     
     // Generate sensor data for chart
@@ -217,7 +224,7 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
     
     switch (type) {
       case 'base':
-        return 'text-eeg-blue bg-eeg-blue/20 border-eeg-blue';
+        return 'text-egypt-blue bg-egypt-blue/20 border-egypt-blue';
       case 'aircraft':
         return 'text-eeg-green bg-eeg-green/20 border-eeg-green';
       case 'vessel':
@@ -365,81 +372,84 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
     <div className={cn("egypt-glassmorphism", className)}>
       <div className="glass-panel-header">
         <h3 className="egypt-header flex items-center">
-          <Globe className="mr-2 h-5 w-5" />
-          GIS Tracking System
+          <Globe className="mr-2 h-5 w-5 text-egypt-gold" />
+          <span className="text-egypt-gold">GIS Tracking System</span>
         </h3>
         <div className="text-sm text-muted-foreground ml-auto">
           <span className="text-egypt-gold">North Africa & Middle East Region</span>
         </div>
       </div>
       
-      <div className="p-4 flex flex-col md:flex-row gap-4">
-        <div className="w-full md:w-3/4">
-          <div className="flex justify-between mb-3">
-            <div className="flex space-x-1">
+      <div className="p-4">
+        <div className="flex flex-col space-y-4">
+          {/* View mode selector and zoom controls */}
+          <div className="flex justify-between w-full">
+            {/* View mode buttons styled like the image */}
+            <div className="flex">
               <button 
-                className={cn("px-2 py-1 text-xs rounded flex items-center", 
-                  viewMode === 'satellite' ? "bg-egypt-gold/70" : "bg-radar-bg"
+                className={cn("px-3 py-1.5 text-sm rounded-l-md border-r border-r-glass-border", 
+                  viewMode === 'satellite' ? "bg-egypt-gold/30 text-white" : "bg-radar-bg/80"
                 )}
                 onClick={() => setViewMode('satellite')}
               >
                 Satellite
               </button>
               <button 
-                className={cn("px-2 py-1 text-xs rounded flex items-center", 
-                  viewMode === 'terrain' ? "bg-egypt-gold/70" : "bg-radar-bg"
+                className={cn("px-3 py-1.5 text-sm border-r border-r-glass-border", 
+                  viewMode === 'terrain' ? "bg-egypt-gold/30 text-white" : "bg-radar-bg/80"
                 )}
                 onClick={() => setViewMode('terrain')}
               >
                 Terrain
               </button>
               <button 
-                className={cn("px-2 py-1 text-xs rounded flex items-center", 
-                  viewMode === 'tactical' ? "bg-egypt-gold/70" : "bg-radar-bg"
+                className={cn("px-3 py-1.5 text-sm border-r border-r-glass-border", 
+                  viewMode === 'tactical' ? "bg-egypt-gold/30 text-white" : "bg-radar-bg/80"
                 )}
                 onClick={() => setViewMode('tactical')}
               >
                 Tactical
               </button>
               <button 
-                className={cn("px-2 py-1 text-xs rounded flex items-center", 
-                  viewMode === '3d' ? "bg-egypt-gold/70" : "bg-radar-bg"
+                className={cn("px-3 py-1.5 text-sm rounded-r-md", 
+                  viewMode === '3d' ? "bg-egypt-gold/30 text-white" : "bg-radar-bg/80"
                 )}
                 onClick={() => setViewMode('3d')}
               >
                 3D View
               </button>
             </div>
-            <div className="flex space-x-1">
-              <button className="px-2 py-1 text-xs rounded bg-radar-bg" onClick={handleZoomIn}>
-                +
+            
+            {/* Map controls */}
+            <div className="flex">
+              <button onClick={handleZoomIn} className="px-2 py-1 border border-glass-border bg-radar-bg/80 rounded-l-md">
+                <Plus className="h-4 w-4" />
               </button>
-              <button className="px-2 py-1 text-xs rounded bg-radar-bg" onClick={handleZoomOut}>
-                -
+              <button onClick={handleZoomOut} className="px-2 py-1 border-y border-glass-border bg-radar-bg/80">
+                <Minus className="h-4 w-4" />
               </button>
               {viewMode === '3d' && (
                 <>
-                  <button className="px-2 py-1 text-xs rounded bg-radar-bg" onClick={increaseTilt}>
-                    ↑
+                  <button onClick={increaseTilt} className="px-2 py-1 border-y border-r border-glass-border bg-radar-bg/80">
+                    <ArrowUp className="h-4 w-4" />
                   </button>
-                  <button className="px-2 py-1 text-xs rounded bg-radar-bg" onClick={decreaseTilt}>
-                    ↓
+                  <button onClick={decreaseTilt} className="px-2 py-1 border-y border-r border-glass-border bg-radar-bg/80">
+                    <ArrowDown className="h-4 w-4" />
                   </button>
                 </>
               )}
-              <button className="px-2 py-1 text-xs rounded bg-radar-bg" onClick={handleResetView}>
-                Reset
+              <button onClick={handleResetView} className="px-2 py-1 border border-glass-border bg-radar-bg/80 rounded-r-md">
+                <RotateCcw className="h-4 w-4" />
               </button>
             </div>
           </div>
-          
+
+          {/* Layers buttons */}
           <div className="flex flex-wrap gap-1 mb-3">
-            <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-              <span>Layers:</span>
-            </div>
+            <span className="text-xs text-muted-foreground self-center mr-1">Layers:</span>
             <button 
               className={cn("px-2 py-1 text-xs rounded flex items-center", 
-                showLabels ? "bg-egypt-gold/20 text-egypt-gold" : "bg-muted/20 text-muted-foreground"
+                showLabels ? "bg-egypt-gold/20 text-egypt-gold" : "bg-radar-bg/80 text-muted-foreground"
               )}
               onClick={() => setShowLabels(!showLabels)}
             >
@@ -448,7 +458,7 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
             </button>
             <button 
               className={cn("px-2 py-1 text-xs rounded flex items-center", 
-                showTerrain ? "bg-egypt-gold/20 text-egypt-gold" : "bg-muted/20 text-muted-foreground"
+                showTerrain ? "bg-egypt-gold/20 text-egypt-gold" : "bg-radar-bg/80 text-muted-foreground"
               )}
               onClick={() => setShowTerrain(!showTerrain)}
             >
@@ -457,349 +467,259 @@ const GISTracking: React.FC<GISTrackingProps> = ({ className }) => {
             </button>
           </div>
           
-          <div 
-            ref={mapRef}
-            className={cn("relative w-full rounded-md overflow-hidden border border-border/50", 
-              viewMode === 'satellite' ? "google-earth-satellite" : 
-              viewMode === 'terrain' ? "google-earth-terrain" : 
-              viewMode === '3d' ? "google-earth-3d" : "tactical-map"
-            )}
-            style={{ height: 'calc(100% - 80px)' }}
-            onClick={handleMapClick}
-            onMouseDown={handleMapMouseDown}
-            onMouseMove={handleMapMouseMove}
-            onMouseUp={handleMapMouseUp}
-            onMouseLeave={handleMapMouseLeave}
-          >
-            {/* 3D perspective effect */}
-            {viewMode === '3d' && (
+          <div className="flex gap-4">
+            {/* Map area - taking most of the space */}
+            <div className="w-3/4 bg-radar-bg/50 rounded-md overflow-hidden border border-glass-border">
+              {/* Map container */}
               <div 
-                className="absolute inset-0 bg-gradient-to-b from-blue-900/30 to-transparent pointer-events-none"
-                style={{ opacity: tilt / 100 }}
-              ></div>
-            )}
-            
-            {/* Map grid lines */}
-            <div className={cn("absolute inset-0 map-grid", viewMode === 'tactical' ? "opacity-30" : "opacity-10")}></div>
-            
-            {/* Google Earth-like atmosphere glow */}
-            {(viewMode === 'satellite' || viewMode === '3d') && (
-              <div className="absolute top-0 left-0 right-0 h-10 bg-gradient-to-b from-blue-500/30 to-transparent"></div>
-            )}
-            
-            {/* Region overlays */}
-            {showTerrain && (
-              <>
-                <div className={cn("absolute region-egypt", 
-                  viewMode === 'tactical' ? "opacity-40" : 
-                  viewMode === '3d' ? "opacity-30 earth-region-elevation" : "opacity-20"
-                )}></div>
-                <div className={cn("absolute region-libya", 
-                  viewMode === 'tactical' ? "opacity-40" : 
-                  viewMode === '3d' ? "opacity-30 earth-region-elevation" : "opacity-20"
-                )}></div>
-                <div className={cn("absolute region-sudan", 
-                  viewMode === 'tactical' ? "opacity-40" : 
-                  viewMode === '3d' ? "opacity-30 earth-region-elevation" : "opacity-20"
-                )}></div>
-                <div className={cn("absolute region-saudi", 
-                  viewMode === 'tactical' ? "opacity-40" : 
-                  viewMode === '3d' ? "opacity-30 earth-region-elevation" : "opacity-20"
-                )}></div>
+                ref={mapRef}
+                className={cn("relative w-full h-[500px] overflow-hidden", 
+                  viewMode === 'satellite' ? "satellite-background" : 
+                  viewMode === 'terrain' ? "terrain-background" : 
+                  viewMode === '3d' ? "satellite-background" : "tactical-background"
+                )}
+                onClick={handleMapClick}
+                onMouseDown={handleMapMouseDown}
+                onMouseMove={handleMapMouseMove}
+                onMouseUp={handleMapMouseUp}
+                onMouseLeave={handleMapMouseLeave}
+              >
+                {/* Map grid */}
+                <div className={cn("absolute inset-0 grid-background", viewMode === 'tactical' ? "opacity-50" : "opacity-20")}></div>
                 
-                {/* Mediterranean Sea */}
-                <div className={cn("absolute mediterranean-sea", 
-                  viewMode === 'tactical' ? "opacity-30" : 
-                  viewMode === 'satellite' || viewMode === '3d' ? "opacity-40 google-earth-water" : "opacity-10"
-                )}></div>
-                
-                {/* Red Sea */}
-                <div className={cn("absolute red-sea", 
-                  viewMode === 'tactical' ? "opacity-30" : 
-                  viewMode === 'satellite' || viewMode === '3d' ? "opacity-40 google-earth-water" : "opacity-10"
-                )}></div>
-                
-                {/* Nile River */}
-                <div className={cn("absolute nile-river", 
-                  viewMode === 'tactical' ? "opacity-50" : 
-                  viewMode === 'satellite' || viewMode === '3d' ? "opacity-60 google-earth-water" : "opacity-20"
-                )}></div>
-                
-                {/* Terrain features */}
-                {(viewMode === 'terrain' || viewMode === 'satellite' || viewMode === '3d') && (
-                  <>
-                    <div className={cn("absolute sinai-mountains", 
-                      viewMode === '3d' ? "earth-elevation" : "opacity-30"
-                    )}>
-                      <Mountain className="h-6 w-6 text-stone-600" />
-                    </div>
-                    {showLabels && (
-                      <>
-                        <div className="absolute western-desert opacity-30">
-                          <div className="text-sm text-stone-600">Western Desert</div>
-                        </div>
-                        <div className="absolute eastern-desert opacity-30">
-                          <div className="text-sm text-stone-600">Eastern Desert</div>
-                        </div>
-                        <div className="absolute sahara-desert opacity-30">
-                          <div className="text-sm text-stone-600">Sahara</div>
-                        </div>
-                      </>
-                    )}
-                  </>
+                {/* 3D effect */}
+                {viewMode === '3d' && (
+                  <div className="absolute inset-0 bg-gradient-to-b from-blue-900/30 to-transparent pointer-events-none"></div>
                 )}
                 
-                {/* Cities and places (Google Earth style) */}
-                {showLabels && (viewMode === 'satellite' || viewMode === 'terrain' || viewMode === '3d') && (
-                  <>
-                    <div className="absolute city-cairo">
-                      <div className="earth-city-marker"></div>
-                      <div className="earth-city-label">Cairo</div>
+                {/* Water bodies */}
+                <div className={cn("absolute mediterranean-region", 
+                  viewMode === 'tactical' ? "bg-blue-900/30" : "bg-blue-800/40"
+                )}></div>
+                <div className={cn("absolute red-sea-region", 
+                  viewMode === 'tactical' ? "bg-blue-900/30" : "bg-blue-800/40"
+                )}></div>
+                
+                {/* Map locations */}
+                {filterLocations(mapLocations).map(location => {
+                  const { x, y } = latLngToPixel(location.lat, location.lng);
+                  const isSelected = selectedLocation?.id === location.id;
+                  const colorClass = getTypeColor(location.type, location.status);
+                  
+                  return (
+                    <div 
+                      key={location.id}
+                      className={cn(
+                        "absolute transform -translate-x-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center",
+                        colorClass,
+                        "rounded-full border-2 transition-all",
+                        { "w-7 h-7 z-10 ring-2 ring-white/50": isSelected },
+                        { "animate-pulse": location.status === 'alert' }
+                      )}
+                      style={{ left: x, top: y }}
+                    >
+                      {getTypeIcon(location.type, location.status)}
+                      
+                      {location.status === 'alert' && !isSelected && (
+                        <div className="absolute -top-1 -right-1">
+                          <AlertTriangle className="h-2 w-2 text-eeg-red" />
+                        </div>
+                      )}
+                      
+                      {/* Location name label */}
+                      {(isSelected || (showLabels && viewMode !== 'tactical')) && (
+                        <div className={cn(
+                          "absolute -bottom-6 left-1/2 transform -translate-x-1/2",
+                          "bg-black/70 px-2 py-0.5 rounded text-xs whitespace-nowrap border border-glass-border",
+                          { "bg-egypt-gold/50 text-white border-egypt-gold": isSelected }
+                        )}>
+                          {location.name}
+                        </div>
+                      )}
                     </div>
-                    <div className="absolute city-alexandria">
-                      <div className="earth-city-marker"></div>
-                      <div className="earth-city-label">Alexandria</div>
-                    </div>
-                    <div className="absolute city-tripoli">
-                      <div className="earth-city-marker"></div>
-                      <div className="earth-city-label">Tripoli</div>
-                    </div>
-                    <div className="absolute city-khartoum">
-                      <div className="earth-city-marker"></div>
-                      <div className="earth-city-label">Khartoum</div>
-                    </div>
-                    <div className="absolute city-riyadh">
-                      <div className="earth-city-marker"></div>
-                      <div className="earth-city-label">Riyadh</div>
-                    </div>
-                    <div className="absolute city-tehran">
-                      <div className="earth-city-marker"></div>
-                      <div className="earth-city-label">Tehran</div>
-                    </div>
-                    <div className="absolute city-istanbul">
-                      <div className="earth-city-marker"></div>
-                      <div className="earth-city-label">Istanbul</div>
-                    </div>
-                  </>
-                )}
-              </>
-            )}
+                  );
+                })}
+                
+                {/* Map attribution */}
+                <div className="absolute bottom-2 right-2 text-[10px] text-white/70 bg-black/50 px-1 rounded">
+                  Egyptian Armed Forces GIS System
+                </div>
+                
+                {/* Compass */}
+                <div className="absolute top-2 right-2 flex items-center justify-center">
+                  <div className="compass-rose">
+                    <div className="compass-n">N</div>
+                    <div className="compass-e">E</div>
+                    <div className="compass-s">S</div>
+                    <div className="compass-w">W</div>
+                  </div>
+                </div>
+              </div>
+            </div>
             
-            {/* Map locations */}
-            {filterLocations(mapLocations).map(location => {
-              const { x, y } = latLngToPixel(location.lat, location.lng);
-              const isSelected = selectedLocation?.id === location.id;
-              const colorClass = getTypeColor(location.type, location.status);
-              
-              return (
-                <div 
-                  key={location.id}
-                  className={cn(
-                    "absolute transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center",
-                    colorClass,
-                    "rounded-full border-2 transition-all",
-                    { "w-8 h-8 z-10": isSelected },
-                    { "animate-pulse": location.status === 'alert' }
+            {/* Asset filters and details panel */}
+            <div className="w-1/4 bg-radar-bg/80 rounded-md p-3 border border-glass-border flex flex-col h-[500px]">
+              {/* Filter buttons */}
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                <button 
+                  className={cn("px-2 py-1 text-xs rounded flex items-center", 
+                    showBases ? "bg-egypt-blue/20 text-blue-400" : "bg-black/30 text-muted-foreground"
                   )}
-                  style={{ left: x, top: y }}
+                  onClick={() => setShowBases(!showBases)}
                 >
-                  {getTypeIcon(location.type, location.status)}
-                  
-                  {location.status === 'alert' && !isSelected && (
-                    <div className="absolute -top-2 -right-2">
-                      <AlertTriangle className="h-3 w-3 text-eeg-red" />
-                    </div>
+                  <Shield className="h-3 w-3 mr-1" />
+                  Bases
+                </button>
+                <button 
+                  className={cn("px-2 py-1 text-xs rounded flex items-center", 
+                    showAircraft ? "bg-eeg-green/20 text-green-400" : "bg-black/30 text-muted-foreground"
                   )}
-                  
-                  {/* Location name label - only show if selected or if labels are enabled */}
-                  {(isSelected || (showLabels && viewMode !== 'tactical')) && (
+                  onClick={() => setShowAircraft(!showAircraft)}
+                >
+                  <Plane className="h-3 w-3 mr-1" />
+                  Aircraft
+                </button>
+                <button 
+                  className={cn("px-2 py-1 text-xs rounded flex items-center", 
+                    showVessels ? "bg-cyan-500/20 text-cyan-400" : "bg-black/30 text-muted-foreground"
+                  )}
+                  onClick={() => setShowVessels(!showVessels)}
+                >
+                  <Ship className="h-3 w-3 mr-1" />
+                  Naval
+                </button>
+                <button 
+                  className={cn("px-2 py-1 text-xs rounded flex items-center", 
+                    showUnits ? "bg-amber-500/20 text-amber-400" : "bg-black/30 text-muted-foreground"
+                  )}
+                  onClick={() => setShowUnits(!showUnits)}
+                >
+                  <MapPin className="h-3 w-3 mr-1" />
+                  Units
+                </button>
+                <button 
+                  className={cn("px-2 py-1 text-xs rounded flex items-center", 
+                    showRadars ? "bg-purple-500/20 text-purple-400" : "bg-black/30 text-muted-foreground"
+                  )}
+                  onClick={() => setShowRadars(!showRadars)}
+                >
+                  <Radio className="h-3 w-3 mr-1" />
+                  Radar
+                </button>
+                <button 
+                  className={cn("px-2 py-1 text-xs rounded flex items-center", 
+                    showThreats ? "bg-eeg-red/20 text-red-400" : "bg-black/30 text-muted-foreground"
+                  )}
+                  onClick={() => setShowThreats(!showThreats)}
+                >
+                  <Target className="h-3 w-3 mr-1" />
+                  Threats
+                </button>
+              </div>
+              
+              {selectedLocation ? (
+                <div className="flex-1 overflow-y-auto">
+                  <div className="text-sm font-medium flex items-center justify-between border-b border-glass-border pb-2 mb-2">
+                    <span className={cn(getTypeColor(selectedLocation.type, selectedLocation.status).split(' ')[0])}>
+                      {selectedLocation.name}
+                    </span>
                     <div className={cn(
-                      "absolute -bottom-8 left-1/2 transform -translate-x-1/2",
-                      "bg-background/80 px-2 py-0.5 rounded text-xs whitespace-nowrap border border-border/50",
-                      { "bg-egypt-gold/30 border-egypt-gold": isSelected }
+                      "text-xs px-1.5 py-0.5 rounded-full",
+                      selectedLocation.status === 'active' ? "bg-eeg-green/20 text-eeg-green" :
+                      selectedLocation.status === 'alert' ? "bg-eeg-red/20 text-eeg-red" :
+                      "bg-muted/20 text-muted-foreground"
                     )}>
-                      {location.name}
+                      {selectedLocation.status?.toUpperCase()}
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                    <div className="bg-black/30 p-1.5 rounded">
+                      <div className="text-muted-foreground">Type</div>
+                      <div className="font-medium capitalize">{selectedLocation.type}</div>
+                    </div>
+                    <div className="bg-black/30 p-1.5 rounded">
+                      <div className="text-muted-foreground">ID</div>
+                      <div className="font-medium">{selectedLocation.id}</div>
+                    </div>
+                    <div className="bg-black/30 p-1.5 rounded">
+                      <div className="text-muted-foreground">Latitude</div>
+                      <div className="font-medium">{selectedLocation.lat.toFixed(4)}°N</div>
+                    </div>
+                    <div className="bg-black/30 p-1.5 rounded">
+                      <div className="text-muted-foreground">Longitude</div>
+                      <div className="font-medium">{selectedLocation.lng.toFixed(4)}°E</div>
+                    </div>
+                  </div>
+                  
+                  {selectedLocation.details && (
+                    <div className="mb-3 bg-black/30 p-2 rounded text-xs">
+                      <div className="text-muted-foreground mb-1">Details</div>
+                      <div>{selectedLocation.details}</div>
                     </div>
                   )}
+                  
+                  <div className="mb-2 text-xs">
+                    <div className="text-muted-foreground mb-1">Local Sensor Data</div>
+                    <div className="h-24 bg-black/30 rounded overflow-hidden">
+                      <ChartContainer config={{
+                        value: { theme: { light: "#10b981", dark: "#10b981" } }
+                      }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                          <AreaChart
+                            data={localSensorData}
+                            margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+                          >
+                            <defs>
+                              <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                                <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                              </linearGradient>
+                            </defs>
+                            <XAxis dataKey="time" tick={{ fontSize: 8 }} />
+                            <YAxis hide />
+                            <ChartTooltip
+                              content={({ active, payload }) => {
+                                if (active && payload && payload.length) {
+                                  return (
+                                    <ChartTooltipContent
+                                      className="!bg-popover"
+                                      payload={payload}
+                                    />
+                                  )
+                                }
+                                return null
+                              }}
+                            />
+                            <Area
+                              name="value"
+                              type="monotone"
+                              dataKey="value"
+                              stroke="#10b981"
+                              strokeWidth={2}
+                              fillOpacity={1}
+                              fill="url(#colorValue)"
+                            />
+                          </AreaChart>
+                        </ResponsiveContainer>
+                      </ChartContainer>
+                    </div>
+                  </div>
                 </div>
-              );
-            })}
-            
-            {/* Map attribution */}
-            <div className="absolute bottom-2 right-2 text-[10px] text-muted-foreground bg-background/50 px-1 rounded">
-              Egyptian Armed Forces GIS System
-            </div>
-            
-            {/* Google Earth-like compass */}
-            {(viewMode === 'satellite' || viewMode === 'terrain' || viewMode === '3d') && (
-              <div className="absolute bottom-8 right-2 w-10 h-10 bg-background/50 rounded-full flex items-center justify-center">
-                <div className="w-8 h-8 earth-compass">
-                  <div className="earth-compass-n">N</div>
-                  <div className="earth-compass-e">E</div>
-                  <div className="earth-compass-s">S</div>
-                  <div className="earth-compass-w">W</div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-        
-        <div className="w-full md:w-1/4 bg-radar-bg rounded-md p-2 h-full flex flex-col">
-          <div className="flex flex-wrap gap-1 mb-3">
-            <button 
-              className={cn("px-2 py-1 text-xs rounded flex items-center", 
-                showBases ? "bg-eeg-blue/20 text-eeg-blue" : "bg-muted/20 text-muted-foreground"
-              )}
-              onClick={() => setShowBases(!showBases)}
-            >
-              <Shield className="h-3 w-3 mr-1" />
-              Bases
-            </button>
-            <button 
-              className={cn("px-2 py-1 text-xs rounded flex items-center", 
-                showAircraft ? "bg-eeg-green/20 text-eeg-green" : "bg-muted/20 text-muted-foreground"
-              )}
-              onClick={() => setShowAircraft(!showAircraft)}
-            >
-              <Plane className="h-3 w-3 mr-1" />
-              Aircraft
-            </button>
-            <button 
-              className={cn("px-2 py-1 text-xs rounded flex items-center", 
-                showVessels ? "bg-cyan-500/20 text-cyan-500" : "bg-muted/20 text-muted-foreground"
-              )}
-              onClick={() => setShowVessels(!showVessels)}
-            >
-              <Ship className="h-3 w-3 mr-1" />
-              Naval
-            </button>
-            <button 
-              className={cn("px-2 py-1 text-xs rounded flex items-center", 
-                showUnits ? "bg-amber-500/20 text-amber-500" : "bg-muted/20 text-muted-foreground"
-              )}
-              onClick={() => setShowUnits(!showUnits)}
-            >
-              <MapPin className="h-3 w-3 mr-1" />
-              Units
-            </button>
-            <button 
-              className={cn("px-2 py-1 text-xs rounded flex items-center", 
-                showRadars ? "bg-purple-500/20 text-purple-500" : "bg-muted/20 text-muted-foreground"
-              )}
-              onClick={() => setShowRadars(!showRadars)}
-            >
-              <Radio className="h-3 w-3 mr-1" />
-              Radar
-            </button>
-            <button 
-              className={cn("px-2 py-1 text-xs rounded flex items-center", 
-                showThreats ? "bg-eeg-red/20 text-eeg-red" : "bg-muted/20 text-muted-foreground"
-              )}
-              onClick={() => setShowThreats(!showThreats)}
-            >
-              <Target className="h-3 w-3 mr-1" />
-              Threats
-            </button>
-          </div>
-          
-          {selectedLocation ? (
-            <div className="flex-1 overflow-y-auto">
-              <div className="text-sm font-medium flex items-center justify-between border-b border-border/30 pb-1 mb-2">
-                <span className={cn(getTypeColor(selectedLocation.type, selectedLocation.status).split(' ')[0])}>
-                  {selectedLocation.name}
-                </span>
-                <div className={cn(
-                  "text-xs px-1 rounded",
-                  selectedLocation.status === 'active' ? "bg-eeg-green/20 text-eeg-green" :
-                  selectedLocation.status === 'alert' ? "bg-eeg-red/20 text-eeg-red" :
-                  "bg-muted/20 text-muted-foreground"
-                )}>
-                  {selectedLocation.status?.toUpperCase()}
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-2 text-xs mb-3">
-                <div className="bg-background/50 p-1 rounded">
-                  <div className="text-muted-foreground">Type</div>
-                  <div className="font-medium capitalize">{selectedLocation.type}</div>
-                </div>
-                <div className="bg-background/50 p-1 rounded">
-                  <div className="text-muted-foreground">ID</div>
-                  <div className="font-medium">{selectedLocation.id}</div>
-                </div>
-                <div className="bg-background/50 p-1 rounded">
-                  <div className="text-muted-foreground">Latitude</div>
-                  <div className="font-medium">{selectedLocation.lat.toFixed(4)}°N</div>
-                </div>
-                <div className="bg-background/50 p-1 rounded">
-                  <div className="text-muted-foreground">Longitude</div>
-                  <div className="font-medium">{selectedLocation.lng.toFixed(4)}°E</div>
-                </div>
-              </div>
-              
-              {selectedLocation.details && (
-                <div className="mb-3 bg-background/50 p-2 rounded text-xs">
-                  <div className="text-muted-foreground mb-1">Details</div>
-                  <div>{selectedLocation.details}</div>
+              ) : (
+                <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">
+                  Select a location for details
                 </div>
               )}
               
-              <div className="mb-2 text-xs">
-                <div className="text-muted-foreground mb-1">Local Sensor Data</div>
-                <div className="h-32 bg-background/50 rounded overflow-hidden">
-                  <ChartContainer config={{
-                    value: { theme: { light: "#10b981", dark: "#10b981" } }
-                  }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart
-                        data={localSensorData}
-                        margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
-                      >
-                        <defs>
-                          <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <XAxis dataKey="time" tick={{ fontSize: 8 }} />
-                        <YAxis hide />
-                        <ChartTooltip
-                          content={({ active, payload }) => {
-                            if (active && payload && payload.length) {
-                              return (
-                                <ChartTooltipContent
-                                  className="!bg-popover"
-                                  payload={payload}
-                                />
-                              )
-                            }
-                            return null
-                          }}
-                        />
-                        <Area
-                          name="value"
-                          type="monotone"
-                          dataKey="value"
-                          stroke="#10b981"
-                          strokeWidth={2}
-                          fillOpacity={1}
-                          fill="url(#colorValue)"
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </ChartContainer>
+              <div className="mt-auto pt-2 border-t border-glass-border text-xs text-muted-foreground">
+                <div>Total assets: {mapLocations.length}</div>
+                <div className="flex items-center">
+                  <span>Alert status:</span>
+                  <span className="ml-1 text-eeg-red">{alertCount} units</span>
                 </div>
               </div>
             </div>
-          ) : (
-            <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">
-              Select a location for details
-            </div>
-          )}
-          
-          <div className="mt-auto pt-2 border-t border-border/30 text-xs text-muted-foreground">
-            <div>Total assets: {mapLocations.length}</div>
-            <div>Alert status: {mapLocations.filter(l => l.status === 'alert').length} units</div>
           </div>
         </div>
       </div>
