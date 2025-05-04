@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import EEGMonitor from "@/components/EEGMonitor";
 import AircraftStatus from "@/components/AircraftStatus";
@@ -62,11 +63,11 @@ const Index = () => {
               </h1>
               <p className="text-sm text-muted-foreground">
                 Arab Academy For Science, Technology & Maritime Transport - North African Region Command
-                <span className="inline-flex items-center ml-2 text-egypt-gold text-xs">
-                  <MapPin className="h-3 w-3 mr-1" />
-                  North Africa & Middle East Operations
-                </span>
               </p>
+              <div className="flex items-center text-egypt-gold text-xs mt-1">
+                <MapPin className="h-3 w-3 mr-1" />
+                <span>North Africa & Middle East Operations</span>
+              </div>
             </div>
             <div className="text-sm">
               <div className="bg-radar-bg px-3 py-1 rounded-md border border-egypt-gold/20 flex items-center">
@@ -125,14 +126,14 @@ const Index = () => {
           
           <footer className="mt-4 text-center text-xs text-muted-foreground">
             <div className="text-egypt-gold">CLASSIFIED: ARAB ACADEMY FOR SCIENCE, TECHNOLOGY & MARITIME TRANSPORT - EMOTIV INSIGHT EEG MONITORING SYSTEM</div>
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center justify-center gap-2 flex-wrap">
               <span>Autopilot Guardian Protocol v3.0.1 - North African Region Command</span>
-              <span className="flex items-center">
+              <div className="flex items-center">
                 <Lock className="h-3 w-3 text-egypt-gold mx-1" />
                 <span className="text-egypt-gold">AES-256/RSA-4096 Encryption</span>
                 <Shield className="h-3 w-3 text-egypt-gold mx-1" />
                 <span className="text-egypt-gold">ISO 27001 Compliant</span>
-              </span>
+              </div>
             </div>
           </footer>
         </div>

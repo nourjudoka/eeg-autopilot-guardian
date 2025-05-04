@@ -128,3 +128,8 @@
 .mission-aborted {
   @apply text-eeg-red;
 }
+
+/* Add glassmorphism class */
+.glassmorphism {
+  @apply bg-glass/30 backdrop-blur-md border border-glass-border rounded-lg shadow-lg;
+}
