@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { cn } from "@/lib/utils";
-import { Users, BrainCircuit } from 'lucide-react';
+import { Users, BrainCircuit, Shield, AlertTriangle, Check } from 'lucide-react';
 
 interface PilotEEGData {
   id: string;
@@ -10,6 +10,8 @@ interface PilotEEGData {
   eegValue: number;
   connected: boolean;
   lastUpdate: Date;
+  neuralSync: number; // Neural synchronization level with aircraft
+  mentalWorkload: number; // Mental workload indicator
 }
 
 interface EEGMonitorProps {
@@ -25,7 +27,9 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
       eegStatus: 'normal', 
       eegValue: 98, 
       connected: true,
-      lastUpdate: new Date() 
+      lastUpdate: new Date(),
+      neuralSync: 94,
+      mentalWorkload: 42
     },
     { 
       id: "p2", 
@@ -33,7 +37,9 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
       eegStatus: 'normal', 
       eegValue: 92, 
       connected: true,
-      lastUpdate: new Date() 
+      lastUpdate: new Date(),
+      neuralSync: 88,
+      mentalWorkload: 56
     },
     { 
       id: "p3", 
@@ -41,7 +47,9 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
       eegStatus: 'normal', 
       eegValue: 85, 
       connected: true,
-      lastUpdate: new Date() 
+      lastUpdate: new Date(),
+      neuralSync: 78,
+      mentalWorkload: 67
     },
     { 
       id: "p4", 
@@ -49,7 +57,9 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
       eegStatus: 'warning', 
       eegValue: 76, 
       connected: true,
-      lastUpdate: new Date() 
+      lastUpdate: new Date(),
+      neuralSync: 64,
+      mentalWorkload: 81
     }
   ]);
   
@@ -70,6 +80,10 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
           const newValue = Math.max(10, Math.min(100, pilot.eegValue + randomChange));
           const newStatus = getEEGStatus(newValue);
           
+          // Neural sync and mental workload fluctuations
+          const syncChange = Math.random() * 4 - 1.5;
+          const workloadChange = Math.random() * 6 - 2;
+          
           // Random connection status change (rare)
           const connected = Math.random() > 0.98 ? !pilot.connected : pilot.connected;
           
@@ -78,7 +92,9 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
             eegValue: Math.round(newValue),
             eegStatus: newStatus,
             connected,
-            lastUpdate: new Date()
+            lastUpdate: new Date(),
+            neuralSync: Math.min(100, Math.max(0, Math.round(pilot.neuralSync + syncChange))),
+            mentalWorkload: Math.min(100, Math.max(0, Math.round(pilot.mentalWorkload + workloadChange)))
           };
         });
       });
@@ -104,6 +120,18 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
     }
   };
   
+  const getWorkloadLevel = (value: number): string => {
+    if (value > 80) return 'High';
+    if (value > 50) return 'Moderate';
+    return 'Low';
+  };
+  
+  const getWorkloadColor = (value: number): string => {
+    if (value > 80) return 'text-eeg-red';
+    if (value > 50) return 'text-eeg-yellow';
+    return 'text-eeg-green';
+  };
+  
   const getCurrentPilot = () => {
     return pilotsData.find(p => p.id === selectedPilot) || pilotsData[0];
   };
@@ -117,19 +145,19 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
           <div className={cn("w-3 h-3 rounded-full animate-pulse-subtle", 
             currentPilot ? getStatusColor(currentPilot.eegStatus) : "bg-muted")}></div>
           <h3 className="text-lg font-medium flex items-center">
-            <BrainCircuit className="w-4 h-4 mr-1" /> EEG Status
+            <BrainCircuit className="w-4 h-4 mr-1" /> Neural Interface
           </h3>
         </div>
-        <div className="text-xs text-muted-foreground">
-          EMOTIV INSIGHT {currentPilot?.connected ? 
-            <span className="text-eeg-green">● CONNECTED</span> : 
-            <span className="text-eeg-red animate-blink">● DISCONNECTED</span>}
+        <div className="text-xs flex items-center">
+          {currentPilot?.connected ? 
+            <span className="text-eeg-green flex items-center"><Check className="w-3 h-3 mr-1" /> EMOTIV INSIGHT 2.0</span> : 
+            <span className="text-eeg-red animate-blink flex items-center"><AlertTriangle className="w-3 h-3 mr-1" /> DISCONNECTED</span>}
         </div>
       </div>
       
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm">Pilot Selection</span>
+          <span className="text-sm">Advanced Neural Squadron</span>
           <div className="flex items-center">
             <Users className="w-3 h-3 mr-1 text-muted-foreground" />
             <span className="text-xs">{pilotsData.length} Pilots</span>
@@ -177,17 +205,63 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
             </div>
           </div>
           
+          {/* New Neural-Aircraft Synchronization Meter */}
+          <div className="mb-4">
+            <div className="flex justify-between mb-1">
+              <span className="text-sm">Neural-Aircraft Sync</span>
+              <span className="text-sm font-medium text-egypt-gold">{currentPilot.neuralSync}%</span>
+            </div>
+            <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-egypt-gold transition-all duration-500 ease-out"
+                style={{ width: `${currentPilot.neuralSync}%` }}
+              ></div>
+            </div>
+          </div>
+          
+          {/* New Mental Workload Indicator */}
+          <div className="mb-4">
+            <div className="flex justify-between mb-1">
+              <span className="text-sm">Mental Workload</span>
+              <span className={cn("text-sm font-medium", getWorkloadColor(currentPilot.mentalWorkload))}>
+                {getWorkloadLevel(currentPilot.mentalWorkload)} ({currentPilot.mentalWorkload}%)
+              </span>
+            </div>
+            <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+              <div 
+                className={cn("h-full transition-all duration-500 ease-out", {
+                  "bg-eeg-green": currentPilot.mentalWorkload <= 50,
+                  "bg-eeg-yellow": currentPilot.mentalWorkload > 50 && currentPilot.mentalWorkload <= 80,
+                  "bg-eeg-red": currentPilot.mentalWorkload > 80
+                })}
+                style={{ width: `${currentPilot.mentalWorkload}%` }}
+              ></div>
+            </div>
+          </div>
+          
           <div className="flex items-center justify-between">
-            <div className="eeg-wave">
+            <div className="flex space-x-1">
               {[...Array(7)].map((_, i) => (
-                <div key={i} className="eeg-wave-bar"></div>
+                <div 
+                  key={i} 
+                  className="eeg-wave h-8 w-1"
+                  style={{ 
+                    animationDelay: `${i * 0.1}s`,
+                    backgroundColor: i % 2 === 0 ? '#4CAF50' : '#D4AF37'
+                  }}
+                ></div>
               ))}
             </div>
             
             <div className="text-sm">
               {currentPilot.eegStatus === 'critical' && (
-                <div className="text-eeg-red font-medium animate-blink">
-                  AUTOPILOT ENGAGED
+                <div className="text-eeg-red font-medium animate-blink flex items-center">
+                  <Shield className="w-4 h-4 mr-1" /> AUTOPILOT ENGAGED
+                </div>
+              )}
+              {currentPilot.eegStatus === 'warning' && currentPilot.mentalWorkload > 75 && (
+                <div className="text-eeg-yellow font-medium flex items-center">
+                  <AlertTriangle className="w-4 h-4 mr-1" /> ASSIST READY
                 </div>
               )}
             </div>
@@ -197,8 +271,11 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
       
       <div className="mt-3 pt-2 border-t border-border/10 text-xs text-muted-foreground">
         <div className="flex justify-between">
-          <div>Last updated: {currentPilot?.lastUpdate.toLocaleTimeString()}</div>
-          <div>ID: {currentPilot?.id}</div>
+          <div>Updated: {currentPilot?.lastUpdate.toLocaleTimeString()}</div>
+          <div className="flex items-center">
+            <Shield className="w-3 h-3 mr-1 text-egypt-gold" />
+            <span>Cortex Secure v2.1</span>
+          </div>
         </div>
       </div>
     </div>
