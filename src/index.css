@@ -44,17 +44,20 @@
   }
 }
 
-/* Glassmorphism and panels */
+/* Glassmorphism and panels - Enhanced */
 .egypt-glassmorphism {
-  @apply bg-glass backdrop-blur-md border border-glass-border rounded-lg shadow-lg;
+  @apply bg-gradient-to-br from-glass/40 to-glass/20 backdrop-blur-xl border border-glass-border/30 rounded-xl shadow-2xl;
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.37),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .glass-panel-header {
-  @apply flex items-center p-3 border-b border-glass-border bg-glass/50;
+  @apply flex items-center p-4 border-b border-glass-border/30 bg-gradient-to-r from-glass/60 to-glass/30 backdrop-blur-sm;
 }
 
 .egypt-header {
-  @apply text-egypt-gold text-lg font-light flex items-center;
+  @apply text-egypt-gold text-lg font-medium flex items-center tracking-wide;
 }
 
 /* Radar specific styles */
@@ -129,9 +132,12 @@
   @apply text-eeg-red;
 }
 
-/* Add glassmorphism class */
+/* Enhanced glassmorphism class */
 .glassmorphism {
-  @apply bg-glass/30 backdrop-blur-md border border-glass-border rounded-lg shadow-lg;
+  @apply bg-gradient-to-br from-glass/40 to-glass/20 backdrop-blur-xl border border-glass-border/30 rounded-xl shadow-2xl;
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.37),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* GIS Map styles */

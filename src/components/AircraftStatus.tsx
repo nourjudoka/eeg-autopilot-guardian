@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { cn } from "@/lib/utils";
 import { Plane, AlertTriangle, Info, Lock, Shield, Clock } from 'lucide-react';
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Aircraft {
   id: string;
@@ -41,6 +42,7 @@ interface AircraftStatusProps {
 }
 
 const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
+  const { t } = useLanguage();
   const [selectedAircraft, setSelectedAircraft] = useState<string | null>(null);
   const [aircraftList, setAircraftList] = useState<Aircraft[]>([
     {
@@ -309,7 +311,7 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
       </div>
       
       <div className="glass-panel-header">
-        <h3 className="text-lg font-medium flex-1">Aircraft Status</h3>
+        <h3 className="text-lg font-medium flex-1">{t('aircraft.status')}</h3>
         {currentAircraft && (
           <div className="text-sm text-muted-foreground">
             {currentAircraft.model} | {currentAircraft.callsign}
@@ -320,10 +322,10 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
       <div className="p-4">
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm">Aircraft Selection</span>
+            <span className="text-sm">{t('aircraft.selection')}</span>
             <div className="flex items-center">
-              <Plane className="w-3 h-3 mr-1 text-muted-foreground" />
-              <span className="text-xs">{aircraftList.length} Aircraft</span>
+              <Plane className="w-3 h-3 ltr:mr-1 rtl:ml-1 text-muted-foreground" />
+              <span className="text-xs">{aircraftList.length} {t('aircraft')}</span>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-1 mb-3">
@@ -360,7 +362,7 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
             )}
             onClick={() => setActiveTab('status')}
           >
-            Status
+            {t('status')}
           </div>
           <div 
             className={cn("py-2 px-4 text-sm cursor-pointer border-b-2", 
@@ -368,7 +370,7 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
             )}
             onClick={() => setActiveTab('maintenance')}
           >
-            Maintenance
+            {t('maintenance')}
           </div>
         </div>
         
@@ -376,32 +378,32 @@ const AircraftStatus: React.FC<AircraftStatusProps> = ({ className }) => {
           <>
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="bg-radar-bg rounded-md p-2">
-                <div className="text-xs text-muted-foreground mb-1">ALTITUDE</div>
+                <div className="text-xs text-muted-foreground mb-1">{t('altitude')}</div>
                 <div className="text-lg font-medium">{currentAircraft.altitude.toLocaleString()} ft</div>
               </div>
               <div className="bg-radar-bg rounded-md p-2">
-                <div className="text-xs text-muted-foreground mb-1">SPEED</div>
+                <div className="text-xs text-muted-foreground mb-1">{t('speed')}</div>
                 <div className="text-lg font-medium">{currentAircraft.speed} kts</div>
               </div>
               <div className="bg-radar-bg rounded-md p-2">
-                <div className="text-xs text-muted-foreground mb-1">HEADING</div>
+                <div className="text-xs text-muted-foreground mb-1">{t('heading')}</div>
                 <div className="text-lg font-medium">{currentAircraft.heading}°</div>
               </div>
             </div>
             
             <div className="flex items-center justify-between mb-4">
-              <div className="text-sm">AUTOPILOT</div>
+              <div className="text-sm">{t('autopilot')}</div>
               <div className={cn("text-sm font-medium px-2 py-1 rounded", {
                 "bg-eeg-green text-white": currentAircraft.autopilot,
                 "bg-muted text-muted-foreground": !currentAircraft.autopilot
               })}>
-                {currentAircraft.autopilot ? "ENGAGED" : "DISENGAGED"}
+                {currentAircraft.autopilot ? t('engaged') : t('disengaged')}
               </div>
             </div>
             
             <div className="mb-4">
               <div className="flex justify-between mb-1">
-                <span className="text-sm">Fuel Remaining</span>
+                <span className="text-sm">{t('fuel.remaining')}</span>
                 <span className={cn("text-sm font-medium", {
                   "text-eeg-red": currentAircraft.fuelRemaining < 20,
                   "text-eeg-yellow": currentAircraft.fuelRemaining >= 20 && currentAircraft.fuelRemaining < 40,

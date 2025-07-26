@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Missile {
   id: string;
@@ -13,6 +14,7 @@ interface MissileStatusProps {
 }
 
 const MissileStatus: React.FC<MissileStatusProps> = ({ className }) => {
+  const { t } = useLanguage();
   const [missiles, setMissiles] = React.useState<Missile[]>([
     { id: 'M1', type: 'AIM-120 AMRAAM', status: 'ready' },
     { id: 'M2', type: 'AIM-120 AMRAAM', status: 'ready' },
@@ -59,18 +61,18 @@ const MissileStatus: React.FC<MissileStatusProps> = ({ className }) => {
   const getStatusText = (status: 'ready' | 'locked' | 'expended') => {
     switch (status) {
       case 'ready':
-        return <span className="text-eeg-green">READY</span>;
+        return <span className="text-eeg-green">{t('ready')}</span>;
       case 'locked':
-        return <span className="text-eeg-yellow">LOCKED</span>;
+        return <span className="text-eeg-yellow">{t('locked')}</span>;
       case 'expended':
-        return <span className="text-muted-foreground">EXPENDED</span>;
+        return <span className="text-muted-foreground">{t('expended')}</span>;
     }
   };
   
   return (
     <div className={cn("glassmorphism", className)}>
       <div className="glass-panel-header">
-        <h3 className="text-lg font-medium">Ordnance Status</h3>
+        <h3 className="text-lg font-medium">{t('ordnance.status')}</h3>
       </div>
       
       <div className="p-4">
@@ -92,11 +94,11 @@ const MissileStatus: React.FC<MissileStatusProps> = ({ className }) => {
         </div>
         
         <div className="mt-4 flex items-center justify-between text-sm">
-          <div>Total: {missiles.length}</div>
+          <div>{t('total')}: {missiles.length}</div>
           <div>
-            Ready: {missiles.filter(m => m.status === 'ready').length} | 
-            Locked: {missiles.filter(m => m.status === 'locked').length} | 
-            Expended: {missiles.filter(m => m.status === 'expended').length}
+            {t('ready')}: {missiles.filter(m => m.status === 'ready').length} | 
+            {t('locked')}: {missiles.filter(m => m.status === 'locked').length} | 
+            {t('expended')}: {missiles.filter(m => m.status === 'expended').length}
           </div>
         </div>
       </div>

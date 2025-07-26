@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Signal, Radar, Satellite, Radio, Waypoints, Waves, AlertTriangle } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SignalData {
   id: string;
@@ -33,6 +34,7 @@ interface SignalIntelligenceProps {
 }
 
 const SignalIntelligence: React.FC<SignalIntelligenceProps> = ({ className }) => {
+  const { t } = useLanguage();
   const [signals, setSignals] = useState<SignalData[]>([]);
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [artemisSystem, setArtemisSystem] = useState<ArtemisSystem>({
@@ -309,12 +311,12 @@ const SignalIntelligence: React.FC<SignalIntelligenceProps> = ({ className }) =>
     <div className={cn("glassmorphism", className)}>
       <div className="glass-panel-header">
         <h3 className="text-lg font-medium flex items-center">
-          <Signal className="mr-2 h-5 w-5" />
-          Signal Intelligence
+          <Signal className="ltr:mr-2 rtl:ml-2 h-5 w-5" />
+          {t('signal.intelligence')}
           {artemisSystem.status === 'connected' && (
-            <span className="ml-2 text-xs bg-eeg-green px-1 py-0.5 rounded flex items-center">
-              <Waves className="h-3 w-3 mr-1" />
-              ARTEMIS ACTIVE
+            <span className="ltr:ml-2 rtl:mr-2 text-xs bg-eeg-green px-1 py-0.5 rounded flex items-center">
+              <Waves className="h-3 w-3 ltr:mr-1 rtl:ml-1" />
+              {t('artemis.active')}
             </span>
           )}
         </h3>
@@ -325,7 +327,7 @@ const SignalIntelligence: React.FC<SignalIntelligenceProps> = ({ className }) =>
             )}
             onClick={() => setActiveFilter('all')}
           >
-            All
+            {t('all')}
           </button>
           <button 
             className={cn("text-xs px-2 py-1 rounded", 
@@ -333,7 +335,7 @@ const SignalIntelligence: React.FC<SignalIntelligenceProps> = ({ className }) =>
             )}
             onClick={() => setActiveFilter('radar')}
           >
-            Radar
+            {t('radar')}
           </button>
           <button 
             className={cn("text-xs px-2 py-1 rounded", 
@@ -341,7 +343,7 @@ const SignalIntelligence: React.FC<SignalIntelligenceProps> = ({ className }) =>
             )}
             onClick={() => setActiveFilter('radio')}
           >
-            Radio
+            {t('radio')}
           </button>
           <button 
             className={cn("text-xs px-2 py-1 rounded", 
@@ -349,7 +351,7 @@ const SignalIntelligence: React.FC<SignalIntelligenceProps> = ({ className }) =>
             )}
             onClick={() => setActiveFilter('datalink')}
           >
-            Datalink
+            {t('datalink')}
           </button>
         </div>
       </div>
@@ -363,7 +365,7 @@ const SignalIntelligence: React.FC<SignalIntelligenceProps> = ({ className }) =>
               onClick={connectToArtemis}
               disabled={isConnecting}
             >
-              {isConnecting ? 'Connecting...' : 'Connect to Artemis'}
+              {isConnecting ? t('connecting') : t('connect.to.artemis')}
             </button>
           ) : (
             <>
@@ -371,24 +373,24 @@ const SignalIntelligence: React.FC<SignalIntelligenceProps> = ({ className }) =>
                 className="px-2 py-1 text-xs rounded bg-radar-bg border border-border flex items-center"
                 onClick={disconnectFromArtemis}
               >
-                Disconnect
+                {t('disconnect')}
               </button>
               
               <div className="px-2 py-1 text-xs rounded bg-radar-bg flex items-center">
-                <span className="mr-1">Mode:</span>
+                <span className="ltr:mr-1 rtl:ml-1">{t('mode')}:</span>
                 <select 
                   className="bg-transparent border-none text-xs"
                   value={artemisSystem.detectionMode}
                   onChange={(e) => changeDetectionMode(e.target.value as 'passive' | 'active' | 'hybrid')}
                 >
-                  <option value="passive">Passive</option>
-                  <option value="active">Active</option>
-                  <option value="hybrid">Hybrid</option>
+                  <option value="passive">{t('passive')}</option>
+                  <option value="active">{t('active')}</option>
+                  <option value="hybrid">{t('hybrid')}</option>
                 </select>
               </div>
               
               <div className="px-2 py-1 text-xs rounded bg-radar-bg flex items-center">
-                <span className="mr-1">Band:</span>
+                <span className="ltr:mr-1 rtl:ml-1">{t('band')}:</span>
                 <select 
                   className="bg-transparent border-none text-xs"
                   value={artemisSystem.currentBandwidth}
@@ -401,7 +403,7 @@ const SignalIntelligence: React.FC<SignalIntelligenceProps> = ({ className }) =>
               </div>
               
               <div className="px-2 py-1 text-xs rounded bg-radar-bg flex items-center">
-                <span className="text-eeg-green">{artemisSystem.activeChannels} channels</span>
+                <span className="text-eeg-green">{artemisSystem.activeChannels} {t('channels')}</span>
               </div>
             </>
           )}
@@ -409,7 +411,7 @@ const SignalIntelligence: React.FC<SignalIntelligenceProps> = ({ className }) =>
       
         {filteredSignals.length === 0 ? (
           <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
-            No signals detected
+            {t('no.signals.detected')}
           </div>
         ) : (
           <div className="space-y-3">
@@ -424,25 +426,25 @@ const SignalIntelligence: React.FC<SignalIntelligenceProps> = ({ className }) =>
                 <div className="flex justify-between mb-1">
                   <div className="flex items-center text-sm font-medium">
                     {getSignalIcon(signal.type)}
-                    <span className="ml-2">{signal.source}</span>
+                    <span className="ltr:ml-2 rtl:mr-2">{signal.source}</span>
                     {signal.encrypted && (
-                      <span className="ml-2 text-xs bg-muted px-1 py-0.5 rounded">ENCRYPTED</span>
+                      <span className="ltr:ml-2 rtl:mr-2 text-xs bg-muted px-1 py-0.5 rounded">{t('encrypted')}</span>
                     )}
                     {signal.artemisVerified && (
-                      <span className="ml-2 text-xs bg-eeg-green/20 text-eeg-green px-1 py-0.5 rounded flex items-center">
-                        <Waves className="h-3 w-3 mr-1" />
-                        VERIFIED
+                      <span className="ltr:ml-2 rtl:mr-2 text-xs bg-eeg-green/20 text-eeg-green px-1 py-0.5 rounded flex items-center">
+                        <Waves className="h-3 w-3 ltr:mr-1 rtl:ml-1" />
+                        {t('verified')}
                       </span>
                     )}
                     {signal.threatLevel && signal.artemisVerified && (
-                      <span className={cn("ml-2 text-xs px-1 py-0.5 rounded flex items-center", 
+                      <span className={cn("ltr:ml-2 rtl:mr-2 text-xs px-1 py-0.5 rounded flex items-center", 
                         signal.threatLevel === 'high' ? "bg-eeg-red/20" : 
                         signal.threatLevel === 'medium' ? "bg-eeg-yellow/20" : 
                         signal.threatLevel === 'low' ? "bg-eeg-green/20" : "bg-muted/20"
                       )}>
-                        {signal.threatLevel === 'high' && <AlertTriangle className="h-3 w-3 mr-1 text-eeg-red" />}
+                        {signal.threatLevel === 'high' && <AlertTriangle className="h-3 w-3 ltr:mr-1 rtl:ml-1 text-eeg-red" />}
                         <span className={getThreatLevelColor(signal.threatLevel)}>
-                          {signal.threatLevel.toUpperCase()}
+                          {t(signal.threatLevel)}
                         </span>
                       </span>
                     )}
@@ -453,15 +455,15 @@ const SignalIntelligence: React.FC<SignalIntelligenceProps> = ({ className }) =>
                 </div>
                 <div className="flex justify-between items-center">
                   <div className="text-sm">
-                    <span className="text-muted-foreground">Freq:</span> {signal.frequency}
+                    <span className="text-muted-foreground">{t('freq')}:</span> {signal.frequency}
                     {signal.signalOrigin && signal.artemisVerified && (
-                      <span className="ml-2 text-xs text-egypt-gold">
+                      <span className="ltr:ml-2 rtl:mr-2 text-xs text-egypt-gold">
                         {signal.signalOrigin}
                       </span>
                     )}
                   </div>
                   <div className="flex items-center">
-                    <span className="text-xs mr-2">Signal:</span>
+                    <span className="text-xs ltr:mr-2 rtl:ml-2">{t('signal')}:</span>
                     <div className="w-20 h-2 bg-secondary rounded-full overflow-hidden">
                       <div 
                         className={cn("h-full", getSignalStrengthColor(signal.strength))}

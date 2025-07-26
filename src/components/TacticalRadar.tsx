@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { cn } from "@/lib/utils";
 import { Search, Plane, Shield, Flag, Radar, Radio, Cpu, AlertTriangle } from 'lucide-react';
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface RadarTarget {
   id: string;
@@ -22,6 +23,7 @@ interface TacticalRadarProps {
 }
 
 const TacticalRadar: React.FC<TacticalRadarProps> = ({ className }) => {
+  const { t } = useLanguage();
   const [targets, setTargets] = useState<RadarTarget[]>([]);
   const [sweepAngle, setSweepAngle] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
@@ -282,32 +284,32 @@ const TacticalRadar: React.FC<TacticalRadarProps> = ({ className }) => {
   return (
     <div className={cn("egypt-glassmorphism", className)}>
       <div className="glass-panel-header">
-        <h3 className="egypt-header">Tactical Radar</h3>
+        <h3 className="egypt-header">{t('tactical.radar')}</h3>
         <div className="text-sm text-muted-foreground ml-auto flex items-center space-x-2">
           <div className="flex bg-radar-bg rounded-md overflow-hidden">
             <button 
               className={cn("px-2 py-1 text-xs", viewMode === 'all' ? "bg-egypt-gold/70" : "")}
               onClick={() => setViewMode('all')}
             >
-              ALL
+              {t('all')}
             </button>
             <button 
               className={cn("px-2 py-1 text-xs", viewMode === 'air' ? "bg-egypt-gold/70" : "")}
               onClick={() => setViewMode('air')}
             >
-              AIR
+              {t('air')}
             </button>
             <button 
               className={cn("px-2 py-1 text-xs", viewMode === 'ground' ? "bg-egypt-gold/70" : "")}
               onClick={() => setViewMode('ground')}
             >
-              GROUND
+              {t('ground')}
             </button>
             <button 
               className={cn("px-2 py-1 text-xs", viewMode === 'cyber' ? "bg-egypt-gold/70" : "")}
               onClick={() => setViewMode('cyber')}
             >
-              CYBER
+              {t('cyber')}
             </button>
           </div>
           <div className="flex bg-radar-bg rounded-md overflow-hidden">
@@ -315,26 +317,26 @@ const TacticalRadar: React.FC<TacticalRadarProps> = ({ className }) => {
               className={cn("px-2 py-1 text-xs", range === 'short' ? "bg-egypt-gold/70" : "")}
               onClick={() => setRange('short')}
             >
-              SHORT
+              {t('short')}
             </button>
             <button 
               className={cn("px-2 py-1 text-xs", range === 'medium' ? "bg-egypt-gold/70" : "")}
               onClick={() => setRange('medium')}
             >
-              MED
+              {t('medium')}
             </button>
             <button 
               className={cn("px-2 py-1 text-xs", range === 'long' ? "bg-egypt-gold/70" : "")}
               onClick={() => setRange('long')}
             >
-              LONG
+              {t('long')}
             </button>
           </div>
           <div className="relative">
             <Search className="absolute top-1/2 left-2 transform -translate-y-1/2 w-3 h-3 text-muted-foreground" />
             <input 
               type="text" 
-              placeholder="Search..."
+              placeholder={t('search')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-7 pr-2 py-1 bg-radar-bg border-none text-xs w-28 rounded-md focus:outline-none focus:ring-1 focus:ring-egypt-gold"
