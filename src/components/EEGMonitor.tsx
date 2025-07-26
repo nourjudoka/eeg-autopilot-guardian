@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { cn } from "@/lib/utils";
 import { Users, BrainCircuit, Shield, AlertTriangle, Check } from 'lucide-react';
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PilotEEGData {
   id: string;
@@ -19,6 +20,7 @@ interface EEGMonitorProps {
 }
 
 const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
+  const { t } = useLanguage();
   const [selectedPilot, setSelectedPilot] = useState<string | null>(null);
   const [pilotsData, setPilotsData] = useState<PilotEEGData[]>([
     { 
@@ -145,22 +147,22 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
           <div className={cn("w-3 h-3 rounded-full animate-pulse-subtle", 
             currentPilot ? getStatusColor(currentPilot.eegStatus) : "bg-muted")}></div>
           <h3 className="text-lg font-medium flex items-center">
-            <BrainCircuit className="w-4 h-4 mr-1" /> Neural Interface
+            <BrainCircuit className="w-4 h-4 mr-1" /> {t('neural.interface')}
           </h3>
         </div>
         <div className="text-xs flex items-center">
           {currentPilot?.connected ? 
             <span className="text-eeg-green flex items-center"><Check className="w-3 h-3 mr-1" /> EMOTIV INSIGHT 2.0</span> : 
-            <span className="text-eeg-red animate-blink flex items-center"><AlertTriangle className="w-3 h-3 mr-1" /> DISCONNECTED</span>}
+            <span className="text-eeg-red animate-blink flex items-center"><AlertTriangle className="w-3 h-3 mr-1" /> {t('disconnected')}</span>}
         </div>
       </div>
       
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm">Advanced Neural Squadron</span>
+          <span className="text-sm">{t('advanced.neural.squadron')}</span>
           <div className="flex items-center">
             <Users className="w-3 h-3 mr-1 text-muted-foreground" />
-            <span className="text-xs">{pilotsData.length} Pilots</span>
+            <span className="text-xs">{pilotsData.length} {t('pilots')}</span>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-1 mb-3">
@@ -186,7 +188,7 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
         <>
           <div className="mb-4">
             <div className="flex justify-between mb-1">
-              <span className="text-sm">Consciousness Level</span>
+              <span className="text-sm">{t('consciousness.level')}</span>
               <span className={cn("text-sm font-medium", {
                 "text-eeg-green": currentPilot.eegStatus === 'normal',
                 "text-eeg-yellow": currentPilot.eegStatus === 'warning',
@@ -208,7 +210,7 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
           {/* New Neural-Aircraft Synchronization Meter */}
           <div className="mb-4">
             <div className="flex justify-between mb-1">
-              <span className="text-sm">Neural-Aircraft Sync</span>
+              <span className="text-sm">{t('neural.aircraft.sync')}</span>
               <span className="text-sm font-medium text-egypt-gold">{currentPilot.neuralSync}%</span>
             </div>
             <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
@@ -222,9 +224,9 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
           {/* New Mental Workload Indicator */}
           <div className="mb-4">
             <div className="flex justify-between mb-1">
-              <span className="text-sm">Mental Workload</span>
+              <span className="text-sm">{t('mental.workload')}</span>
               <span className={cn("text-sm font-medium", getWorkloadColor(currentPilot.mentalWorkload))}>
-                {getWorkloadLevel(currentPilot.mentalWorkload)} ({currentPilot.mentalWorkload}%)
+                {t(getWorkloadLevel(currentPilot.mentalWorkload).toLowerCase())} ({currentPilot.mentalWorkload}%)
               </span>
             </div>
             <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
@@ -256,12 +258,12 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
             <div className="text-sm">
               {currentPilot.eegStatus === 'critical' && (
                 <div className="text-eeg-red font-medium animate-blink flex items-center">
-                  <Shield className="w-4 h-4 mr-1" /> AUTOPILOT ENGAGED
+                  <Shield className="w-4 h-4 mr-1" /> {t('autopilot.engaged')}
                 </div>
               )}
               {currentPilot.eegStatus === 'warning' && currentPilot.mentalWorkload > 75 && (
                 <div className="text-eeg-yellow font-medium flex items-center">
-                  <AlertTriangle className="w-4 h-4 mr-1" /> ASSIST READY
+                  <AlertTriangle className="w-4 h-4 mr-1" /> {t('assist.ready')}
                 </div>
               )}
             </div>
@@ -271,10 +273,10 @@ const EEGMonitor: React.FC<EEGMonitorProps> = ({ className }) => {
       
       <div className="mt-3 pt-2 border-t border-border/10 text-xs text-muted-foreground">
         <div className="flex justify-between">
-          <div>Updated: {currentPilot?.lastUpdate.toLocaleTimeString()}</div>
+          <div>{t('updated')}: {currentPilot?.lastUpdate.toLocaleTimeString()}</div>
           <div className="flex items-center">
             <Shield className="w-3 h-3 mr-1 text-egypt-gold" />
-            <span>Cortex Secure v2.1</span>
+            <span>{t('cortex.secure')} v2.1</span>
           </div>
         </div>
       </div>

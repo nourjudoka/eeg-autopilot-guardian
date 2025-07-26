@@ -240,3 +240,28 @@
   left: 5px;
   color: rgba(255, 255, 255, 0.7);
 }
+
+/* RTL Support */
+.rtl {
+  direction: rtl;
+}
+
+.rtl .flex.space-x-4 > :not([hidden]) ~ :not([hidden]) {
+  margin-right: 1rem;
+  margin-left: 0;
+}
+
+.rtl .flex.space-x-6 > :not([hidden]) ~ :not([hidden]) {
+  margin-right: 1.5rem;
+  margin-left: 0;
+}
+
+.rtl .flex.space-x-2 > :not([hidden]) ~ :not([hidden]) {
+  margin-right: 0.5rem;
+  margin-left: 0;
+}
+
+.rtl .flex.space-x-1 > :not([hidden]) ~ :not([hidden]) {
+  margin-right: 0.25rem;
+  margin-left: 0;
+}
