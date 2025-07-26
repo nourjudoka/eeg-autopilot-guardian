@@ -68,7 +68,7 @@ const Index = () => {
                 {t('tactical.command')}
               </p>
               <div className="flex items-center text-egypt-gold text-xs mt-1">
-                <MapPin className="h-3 w-3 mr-1" />
+                <MapPin className="h-3 w-3 ltr:mr-1 rtl:ml-1" />
                 <span>{t('egypt.air.force')}</span>
               </div>
             </div>
@@ -86,10 +86,10 @@ const Index = () => {
                 <span className="text-egypt-gold mr-2">{t('system.status')}</span> 
                 <span className="mr-2">|</span>
                 <span>{new Date().toLocaleString()}</span>
-                <span className="ml-2 mr-1">|</span>
+                <span className="ltr:ml-2 ltr:mr-1 rtl:mr-2 rtl:ml-1">|</span>
                 <div className="flex items-center">
                   <Shield className="h-3 w-3 text-eeg-green" />
-                  <span className="ml-1 text-xs text-eeg-green">
+                  <span className="ltr:ml-1 rtl:mr-1 text-xs text-eeg-green">
                     {securityStatus === 'verifying' ? t('verifying.security') : t('secure')}
                   </span>
                 </div>
@@ -141,9 +141,9 @@ const Index = () => {
             <div className="flex items-center justify-center gap-2 flex-wrap">
               <span>{t('eagle.eye')} v3.0.1 - {t('egypt.air.force')}</span>
               <div className="flex items-center">
-                <Lock className="h-3 w-3 text-egypt-gold mx-1" />
+                <Lock className="h-3 w-3 text-egypt-gold ltr:mx-1 rtl:mx-1" />
                 <span className="text-egypt-gold">AES-256/RSA-4096</span>
-                <Shield className="h-3 w-3 text-egypt-gold mx-1" />
+                <Shield className="h-3 w-3 text-egypt-gold ltr:mx-1 rtl:mx-1" />
                 <span className="text-egypt-gold">{t('secure')}</span>
               </div>
             </div>

@@ -246,6 +246,7 @@
   direction: rtl;
 }
 
+/* Fix spacing for RTL */
 .rtl .flex.space-x-4 > :not([hidden]) ~ :not([hidden]) {
   margin-right: 1rem;
   margin-left: 0;
@@ -264,4 +265,43 @@
 .rtl .flex.space-x-1 > :not([hidden]) ~ :not([hidden]) {
   margin-right: 0.25rem;
   margin-left: 0;
+}
+
+/* RTL icon positioning */
+.rtl .mr-1 {
+  margin-right: 0;
+  margin-left: 0.25rem;
+}
+
+.rtl .mr-2 {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+.rtl .mr-3 {
+  margin-right: 0;
+  margin-left: 0.75rem;
+}
+
+.rtl .ml-1 {
+  margin-left: 0;
+  margin-right: 0.25rem;
+}
+
+.rtl .ml-2 {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+/* RTL text alignment */
+.rtl .text-center {
+  text-align: center;
+}
+
+.rtl .text-right {
+  text-align: left;
+}
+
+.rtl .text-left {
+  text-align: right;
 }
