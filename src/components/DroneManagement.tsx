@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Search, Activity, Battery, Signal, MapPin, Radio, Plane } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DroneManagementProps {
   className?: string;
@@ -60,6 +61,7 @@ const getDroneStatuses = (): DroneStatus[] => {
 };
 
 const DroneManagement = ({ className }: DroneManagementProps) => {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("active");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDrone, setSelectedDrone] = useState<DroneStatus | null>(null);
@@ -129,12 +131,12 @@ const DroneManagement = ({ className }: DroneManagementProps) => {
         <div className="flex justify-between items-center w-full">
           <div className="egypt-header">
             <Plane className="w-5 h-5 mr-2 text-egypt-gold" />
-            UAV Drone Management System
+            {t('uav.drone.management')}
           </div>
           <div className="relative w-64">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search drones..."
+              placeholder={t('search.drones')}
               className="pl-8 bg-background/50"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -146,10 +148,10 @@ const DroneManagement = ({ className }: DroneManagementProps) => {
       <CardContent className="pt-4">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-4">
-            <TabsTrigger value="all">All Drones</TabsTrigger>
-            <TabsTrigger value="active">Active</TabsTrigger>
-            <TabsTrigger value="mission">In Mission</TabsTrigger>
-            <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
+            <TabsTrigger value="all">{t('all.drones')}</TabsTrigger>
+            <TabsTrigger value="active">{t('active')}</TabsTrigger>
+            <TabsTrigger value="mission">{t('in.mission')}</TabsTrigger>
+            <TabsTrigger value="maintenance">{t('maintenance')}</TabsTrigger>
           </TabsList>
           
           <TabsContent value={activeTab} className="space-y-4">
@@ -157,12 +159,12 @@ const DroneManagement = ({ className }: DroneManagementProps) => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[250px]">Drone</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Battery</TableHead>
-                    <TableHead>Signal</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="w-[250px]">{t('drone')}</TableHead>
+                    <TableHead>{t('status')}</TableHead>
+                    <TableHead>{t('battery')}</TableHead>
+                    <TableHead>{t('signal')}</TableHead>
+                    <TableHead>{t('location')}</TableHead>
+                    <TableHead className="text-right">{t('actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -202,7 +204,7 @@ const DroneManagement = ({ className }: DroneManagementProps) => {
                             setControlDialogOpen(true);
                           }}
                         >
-                          Control
+                          {t('control')}
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -217,7 +219,7 @@ const DroneManagement = ({ className }: DroneManagementProps) => {
       <CardFooter className="flex justify-between">
         <div>
           <span className="text-sm text-muted-foreground">
-            Total UAVs: {filteredDrones.length}
+            {t('total.uavs')}: {filteredDrones.length}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -251,36 +253,36 @@ const DroneManagement = ({ className }: DroneManagementProps) => {
                 <div className="bg-muted/30 p-4 rounded-lg">
                   <h4 className="font-medium mb-2 flex items-center">
                     <Activity className="h-4 w-4 mr-2 text-blue-500" />
-                    Status Information
+                    {t('status.information')}
                   </h4>
                   
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Status:</span>
+                      <span className="text-muted-foreground">{t('status')}:</span>
                       <span>{getStatusBadge(selectedDrone.status)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Battery Level:</span>
+                      <span className="text-muted-foreground">{t('battery.level')}:</span>
                       <span className={getBatteryStatusColor(selectedDrone.batteryLevel)}>
                         {selectedDrone.batteryLevel}%
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Signal Strength:</span>
+                      <span className="text-muted-foreground">{t('signal.strength')}:</span>
                       <span className={getSignalStatusColor(selectedDrone.signalStrength)}>
                         {selectedDrone.signalStrength}%
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Current Altitude:</span>
+                      <span className="text-muted-foreground">{t('current.altitude')}:</span>
                       <span>{selectedDrone.altitude} ft</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Current Speed:</span>
+                      <span className="text-muted-foreground">{t('current.speed')}:</span>
                       <span>{selectedDrone.speed} km/h</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Last Communication:</span>
+                      <span className="text-muted-foreground">{t('last.communication')}:</span>
                       <span>{selectedDrone.lastCommunication.toLocaleTimeString()}</span>
                     </div>
                   </div>
@@ -289,21 +291,21 @@ const DroneManagement = ({ className }: DroneManagementProps) => {
                 <div className="bg-muted/30 p-4 rounded-lg">
                   <h4 className="font-medium mb-2 flex items-center">
                     <Radio className="h-4 w-4 mr-2 text-blue-500" />
-                    Command Center
+                    {t('command.center')}
                   </h4>
                   
                   <div className="grid grid-cols-2 gap-2">
                     <Button variant="outline" size="sm" className="bg-blue-900/20 hover:bg-blue-900/30 text-blue-500">
-                      Camera Feed
+                      {t('camera.feed')}
                     </Button>
                     <Button variant="outline" size="sm" className="bg-blue-900/20 hover:bg-blue-900/30 text-blue-500">
-                      Sensor Data
+                      {t('sensor.data')}
                     </Button>
                     <Button variant="outline" size="sm" className="bg-blue-900/20 hover:bg-blue-900/30 text-blue-500">
-                      Flight Log
+                      {t('flight.log')}
                     </Button>
                     <Button variant="outline" size="sm" className="bg-blue-900/20 hover:bg-blue-900/30 text-blue-500">
-                      Maintenance
+                      {t('maintenance')}
                     </Button>
                   </div>
                 </div>
@@ -313,26 +315,26 @@ const DroneManagement = ({ className }: DroneManagementProps) => {
                 <div className="bg-black/60 p-4 rounded-lg text-center h-[200px] flex items-center justify-center">
                   <div className="text-muted-foreground">
                     <Plane className="h-12 w-12 mx-auto mb-2 text-green-500" />
-                    Live Feed Available
+                    {t('live.feed.available')}
                   </div>
                 </div>
                 
                 <div className="mt-4 space-y-3">
-                  <h4 className="font-medium">Mission Controls</h4>
+                  <h4 className="font-medium">{t('mission.controls')}</h4>
                   
                   <div className="grid grid-cols-2 gap-3">
                     <Button 
                       className="bg-green-600 hover:bg-green-700"
                       onClick={handleLaunchMission}
                     >
-                      Launch Mission
+                      {t('launch.mission')}
                     </Button>
                     <Button 
                       variant="outline"
                       className="border-red-500 text-red-500 hover:bg-red-500/10"
                       onClick={handleReturnToBase}
                     >
-                      Return to Base
+                      {t('return.to.base')}
                     </Button>
                   </div>
                 </div>
@@ -341,7 +343,7 @@ const DroneManagement = ({ className }: DroneManagementProps) => {
             
             <DialogFooter>
               <Button variant="outline" onClick={() => setControlDialogOpen(false)}>
-                Close
+                {t('close')}
               </Button>
             </DialogFooter>
           </DialogContent>

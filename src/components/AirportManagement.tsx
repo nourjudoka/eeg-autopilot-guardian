@@ -11,12 +11,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Search, MapPin, Shield, Plane, Building, AlertTriangle, Check } from "lucide-react";
 import AirportDetails from "./AirportDetails";
 import { useToast } from "@/components/ui/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface AirportManagementProps {
   className?: string;
 }
 
 const AirportManagement = ({ className }: AirportManagementProps) => {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("military");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedAirport, setSelectedAirport] = useState<Airport | null>(null);
@@ -79,12 +81,12 @@ const AirportManagement = ({ className }: AirportManagementProps) => {
         <div className="flex justify-between items-center w-full">
           <div className="egypt-header">
             <Building className="w-5 h-5 mr-2 text-egypt-gold" />
-            Airport Management System
+            {t('airport.management.system')}
           </div>
           <div className="relative w-64">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search airports..."
+              placeholder={t('search.airports')}
               className="pl-8 bg-background/50"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -96,9 +98,9 @@ const AirportManagement = ({ className }: AirportManagementProps) => {
       <CardContent className="pt-4">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-4">
-            <TabsTrigger value="all">All Airports</TabsTrigger>
-            <TabsTrigger value="military">Military</TabsTrigger>
-            <TabsTrigger value="civilian">Civilian</TabsTrigger>
+            <TabsTrigger value="all">{t('all.airports')}</TabsTrigger>
+            <TabsTrigger value="military">{t('military')}</TabsTrigger>
+            <TabsTrigger value="civilian">{t('civilian')}</TabsTrigger>
           </TabsList>
           
           <TabsContent value={activeTab} className="space-y-4">
@@ -106,12 +108,12 @@ const AirportManagement = ({ className }: AirportManagementProps) => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[250px]">Name</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Security</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="w-[250px]">{t('name')}</TableHead>
+                    <TableHead>{t('location')}</TableHead>
+                    <TableHead>{t('type')}</TableHead>
+                    <TableHead>{t('status')}</TableHead>
+                    <TableHead>{t('security')}</TableHead>
+                    <TableHead className="text-right">{t('actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -144,7 +146,7 @@ const AirportManagement = ({ className }: AirportManagementProps) => {
                           size="sm"
                           onClick={() => setSelectedAirport(airport)}
                         >
-                          View Details
+                          {t('view.details')}
                         </Button>
                         {airport.approvalNeeded && !airport.militaryUse && (
                           <Button 
@@ -153,7 +155,7 @@ const AirportManagement = ({ className }: AirportManagementProps) => {
                             className="ml-2 bg-blue-900/20 hover:bg-blue-900/30 text-blue-500"
                             onClick={() => requestApproval(airport)}
                           >
-                            Request Use
+                            {t('request.use')}
                           </Button>
                         )}
                       </TableCell>
@@ -169,21 +171,21 @@ const AirportManagement = ({ className }: AirportManagementProps) => {
       <CardFooter className="flex justify-between">
         <div>
           <span className="text-sm text-muted-foreground">
-            Total Airports: {filteredAirports.length}
+            {t('total.airports')}: {filteredAirports.length}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center">
             <div className="h-3 w-3 rounded-full bg-green-500 mr-1"></div>
-            <span className="text-xs text-muted-foreground">Operational</span>
+            <span className="text-xs text-muted-foreground">{t('operational')}</span>
           </div>
           <div className="flex items-center">
             <div className="h-3 w-3 rounded-full bg-yellow-500 mr-1"></div>
-            <span className="text-xs text-muted-foreground">Limited</span>
+            <span className="text-xs text-muted-foreground">{t('limited')}</span>
           </div>
           <div className="flex items-center">
             <div className="h-3 w-3 rounded-full bg-red-500 mr-1"></div>
-            <span className="text-xs text-muted-foreground">Suspended</span>
+            <span className="text-xs text-muted-foreground">{t('suspended')}</span>
           </div>
         </div>
       </CardFooter>

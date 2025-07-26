@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Message {
   id: string;
@@ -15,6 +16,7 @@ interface GroundControlProps {
 }
 
 const GroundControl: React.FC<GroundControlProps> = ({ className }) => {
+  const { t } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([]);
   const [latency, setLatency] = useState(12);
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'degraded' | 'lost'>('connected');
@@ -121,12 +123,12 @@ const GroundControl: React.FC<GroundControlProps> = ({ className }) => {
   return (
     <div className={cn("glassmorphism", className)}>
       <div className="glass-panel-header">
-        <h3 className="text-lg font-medium">Ground Control Communications</h3>
+        <h3 className="text-lg font-medium">{t('ground.control.communications')}</h3>
         <div className="flex items-center ml-auto">
           {getConnectionStatusIndicator()}
           <span className="text-xs ml-2">
-            {connectionStatus === 'connected' ? 'ONLINE' : 
-             connectionStatus === 'degraded' ? 'DEGRADED' : 'OFFLINE'}
+            {connectionStatus === 'connected' ? t('online') : 
+             connectionStatus === 'degraded' ? t('degraded') : t('offline')}
           </span>
           {connectionStatus !== 'lost' && (
             <span className="text-xs ml-2 text-muted-foreground">
@@ -139,7 +141,7 @@ const GroundControl: React.FC<GroundControlProps> = ({ className }) => {
       <div className="p-4 h-[240px] overflow-y-auto">
         {messages.length === 0 ? (
           <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
-            No messages received
+            {t('no.messages.received')}
           </div>
         ) : (
           <div className="space-y-3">

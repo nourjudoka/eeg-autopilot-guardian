@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { cn } from "@/lib/utils";
 import { Radio, Mic, Volume2, UserRound, Clock, MessageSquare, ShieldAlert } from 'lucide-react';
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Message {
   id: string;
@@ -17,6 +18,7 @@ interface WalkieTalkieProps {
 }
 
 const WalkieTalkie: React.FC<WalkieTalkieProps> = ({ className }) => {
+  const { t } = useLanguage();
   const [activeChannel, setActiveChannel] = useState('COMMAND');
   const [volume, setVolume] = useState(75);
   const [isMuted, setIsMuted] = useState(false);
@@ -24,10 +26,10 @@ const WalkieTalkie: React.FC<WalkieTalkieProps> = ({ className }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   
   const channels = [
-    { id: 'COMMAND', name: 'Command', color: 'text-egypt-gold' },
-    { id: 'TACTICAL', name: 'Tactical', color: 'text-eeg-green' },
-    { id: 'RECON', name: 'Reconnaissance', color: 'text-eeg-blue' },
-    { id: 'EMERGENCY', name: 'Emergency', color: 'text-eeg-red' }
+    { id: 'COMMAND', name: t('command'), color: 'text-egypt-gold' },
+    { id: 'TACTICAL', name: t('tactical.channel'), color: 'text-eeg-green' },
+    { id: 'RECON', name: t('reconnaissance'), color: 'text-eeg-blue' },
+    { id: 'EMERGENCY', name: t('emergency'), color: 'text-eeg-red' }
   ];
   
   // Simulate receiving messages
@@ -129,9 +131,9 @@ const WalkieTalkie: React.FC<WalkieTalkieProps> = ({ className }) => {
     <div className={cn("glassmorphism", className)}>
       <div className="glass-panel-header">
         <h3 className="text-lg font-medium flex items-center">
-          <Radio className="mr-2 h-4 w-4" /> Communication System
+          <Radio className="mr-2 h-4 w-4" /> {t('communication.system')}
         </h3>
-        <div className="text-sm text-muted-foreground">FREQ: 157.325 MHz</div>
+        <div className="text-sm text-muted-foreground">{t('freq')}: 157.325 MHz</div>
       </div>
       
       <div className="p-4">
@@ -198,7 +200,7 @@ const WalkieTalkie: React.FC<WalkieTalkieProps> = ({ className }) => {
             </div>
           ) : (
             <div className="h-full flex items-center justify-center text-xs text-muted-foreground">
-              No messages on this channel
+              {t('no.messages.channel')}
             </div>
           )}
         </div>
@@ -232,7 +234,7 @@ const WalkieTalkie: React.FC<WalkieTalkieProps> = ({ className }) => {
           <div className="flex items-center space-x-2">
             <div className="flex items-center text-xs">
               <ShieldAlert className="h-3 w-3 mr-1 text-egypt-gold" />
-              <span>SECURE</span>
+              <span>{t('secure')}</span>
             </div>
             
             <button
@@ -246,14 +248,14 @@ const WalkieTalkie: React.FC<WalkieTalkieProps> = ({ className }) => {
               disabled={isTransmitting}
             >
               <Mic className={cn("h-3 w-3 mr-1", isTransmitting ? "animate-pulse" : "")} />
-              {isTransmitting ? "TRANSMITTING..." : "TRANSMIT"}
+              {isTransmitting ? t('transmitting') : t('transmit')}
             </button>
           </div>
         </div>
         
         <div className="flex items-center">
           <MessageSquare className="h-3 w-3 mr-1 text-muted-foreground" />
-          <div className="text-xs text-muted-foreground">{messages.length} messages received</div>
+          <div className="text-xs text-muted-foreground">{messages.length} {t('messages.received')}</div>
         </div>
       </div>
     </div>
